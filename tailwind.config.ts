@@ -9,8 +9,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        transparent: "transparent",
+        current: "currentColor",
+        indigo: "#51368D",
+        slate: "#25303E",
+        pacific: "#0298EC",
+        lime: "#64BA00",
+        honey: "#FFB000",
+        tango: "#F96E10",
+        silver: "#D0D3D4",
+        fog: "#F0F0F0",
+        white: "#FFFFFF",
       },
     },
   },
