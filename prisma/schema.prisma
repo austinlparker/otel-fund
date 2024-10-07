@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BountyStatus {
+  NEW
+  PENDING_MODERATION
+  MODERATION_AUTO_REJECT
+  MODERATION_AUTO_UNSURE
+  MODERATION_AUTO_APPROVE
+  ACTIVE
+  COMPLETED
+}
+
+model Bounty {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  repoLink    String
+  notes       String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  createdBy   String
+  status      BountyStatus @default(NEW)
+  votes       Vote[]
+  tags        Tag[]
+}
+
+model Tag {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  bounties Bounty[]
+}
+
+model Vote {
+  id        Int      @id @default(autoincrement())
+  userEmail String
+  bounty    Bounty   @relation(fields: [bountyId], references: [id])
+  bountyId  Int
+  createdAt DateTime @default(now())
+
+  @@unique([userEmail, bountyId])
+}
