@@ -19,11 +19,11 @@ export default function AddBountyButton() {
   return (
     <>
       <button
-        className="bg-pacific text-white px-4 py-2 rounded-md hover:bg-opacity-90"
+        className="bg-tango text-white px-4 py-2 rounded-md hover:bg-opacity-90 font-semibold"
         onClick={openModal}
         aria-label="Add new bounty request"
       >
-        Add Feature
+        + Add Bounty
       </button>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <AddBountyForm onClose={closeModal} />

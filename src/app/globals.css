@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,15 +15,53 @@
         --foreground: #ededed;
     }
 }
-
 body {
-    color: var(--foreground);
-    background: var(--background);
-    font-family: Arial, Helvetica, sans-serif;
+    color: theme("colors.slate");
+    background: theme("colors.fog");
+    font-family: "Open Sans", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        color: #fff;
+        background: #1b1b1b;
+    }
+}
+
+a {
+    color: #da552f;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 @layer utilities {
     .text-balance {
         text-wrap: balance;
     }
+}
+
+html,
+body {
+    @apply antialiased;
+}
+
+body {
+    @apply text-slate dark:text-white bg-fog dark:bg-slate;
+}
+
+h1 {
+    @apply text-2xl sm:text-3xl md:text-4xl font-bold;
+}
+
+h2 {
+    @apply text-xl sm:text-2xl md:text-3xl font-semibold;
+}
+
+h3 {
+    @apply text-lg sm:text-xl md:text-2xl font-semibold;
 }

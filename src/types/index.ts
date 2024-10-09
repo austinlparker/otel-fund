@@ -1,3 +1,13 @@
+import {
+  Bounty as PrismaBounty,
+  User,
+  Tag,
+  Vote,
+  Comment,
+} from "@prisma/client";
+
+export type SortOption = "new" | "hot" | "popular" | "all";
+
 export interface Vote {
   id: number;
   userEmail: string;
@@ -5,21 +15,22 @@ export interface Vote {
   createdAt: Date;
 }
 
-export interface Bounty {
-  id?: number;
-  title: string;
-  description: string;
-  repoLink: string;
-  notes: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  createdBy: string;
-  status: BountyStatus; // Now using the enum
-  votes?: Vote[];
-  tags: string[];
-}
+export type CommentWithReplies = Comment & {
+  author: User;
+  replies: CommentWithReplies[];
+};
 
-export type GetBountiesResult = Bounty[] | null;
+export type Bounty = PrismaBounty & {
+  tags: Tag[];
+  votes: Vote[];
+  comments: CommentWithReplies[];
+  user: User | null;
+};
+
+export interface GetBountiesResult {
+  bounties: Bounty[];
+  totalCount: number;
+}
 
 export interface BountyListProps {
   initialBounties: Bounty[];
