@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getBounties } from "@/lib/data";
+import { SortOption } from "@/types";
 import BountyListContainer from "@/components/BountyListContainer";
+import HomeHeader from "@/components/HomeHeader";
 
 interface HomeProps {
   searchParams: {
@@ -28,13 +30,20 @@ export default async function Home({ searchParams }: HomeProps) {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">All Bounties</h1>
-      <BountyListContainer
-        initialBounties={bounties}
-        totalCount={totalCount}
-        itemsPerPage={itemsPerPage}
-      />
-    </div>
+    <>
+      <HomeHeader />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-4">All Bounties</h1>
+        <Suspense fallback={<div>Loading bounties...</div>}>
+          <BountyListContainer
+            initialBounties={bounties}
+            totalCount={totalCount}
+            itemsPerPage={itemsPerPage}
+            currentPage={page}
+            currentSort={sortOption}
+          />
+        </Suspense>
+      </div>
+    </>
   );
 }

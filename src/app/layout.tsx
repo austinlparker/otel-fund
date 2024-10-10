@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/components/Header";
 import { Providers } from "./providers";
 import Footer from "@/components/Footer";
 import { Toaster } from "react-hot-toast";
@@ -17,8 +16,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
@@ -28,8 +29,8 @@ export default function RootLayout({
       <body>
         <Providers>
           <div className="antialiased bg-fog dark:bg-slate text-slate dark:text-white">
-            <Header />
-            <main className="container mx-auto px-4 py-8">{children}</main>
+            {children}
+            {modal}
             <Footer />
             <Toaster position="bottom-right" />
           </div>

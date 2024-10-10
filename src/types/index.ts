@@ -1,28 +1,32 @@
 import {
   Bounty as PrismaBounty,
   User,
-  Tag,
-  Vote,
+  Tag as PrismaTag,
+  Vote as PrismaVote,
   Comment,
 } from "@prisma/client";
 
 export type SortOption = "new" | "hot" | "popular" | "all";
 
-export interface Vote {
-  id: number;
-  userEmail: string;
-  bountyId: number;
-  createdAt: Date;
-}
+export type Vote = PrismaVote;
 
 export type CommentWithReplies = Comment & {
-  author: User;
+  author: {
+    id: string;
+    name: string | null;
+    email: string;
+    image: string | null;
+    emailVerified: Date | null;
+    isAdmin?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+  };
   replies: CommentWithReplies[];
 };
 
 export type Bounty = PrismaBounty & {
-  tags: Tag[];
-  votes: Vote[];
+  tags: PrismaTag[];
+  votes: PrismaVote[];
   comments: CommentWithReplies[];
   user: User | null;
 };
@@ -36,10 +40,7 @@ export interface BountyListProps {
   initialBounties: Bounty[];
 }
 
-export interface Tag {
-  id: number;
-  name: string;
-}
+export type Tag = PrismaTag;
 
 export enum BountyStatus {
   NEW = "NEW",

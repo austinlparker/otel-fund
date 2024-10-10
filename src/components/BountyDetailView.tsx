@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Bounty } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,17 +10,18 @@ import {
 import UserAvatar from "./UserAvatar";
 import Tag from "./Tag";
 import VoteButton from "./VoteButton";
-import CommentSection from "./CommentSection";
+import { useRouter } from "next/navigation";
 
 interface BountyDetailViewProps {
   bounty: Bounty;
-  onVoteSuccess: (updatedBounty: Bounty) => void;
 }
 
-const BountyDetailView: React.FC<BountyDetailViewProps> = ({
-  bounty,
-  onVoteSuccess,
-}) => {
+const BountyDetailView: React.FC<BountyDetailViewProps> = ({ bounty }) => {
+  const router = useRouter();
+
+  const handleVoteSuccess = () => {
+    router.refresh(); // This will re-fetch the data and update the UI
+  };
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
@@ -42,7 +45,7 @@ const BountyDetailView: React.FC<BountyDetailViewProps> = ({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <VoteButton
           bounty={bounty}
-          onVoteSuccess={() => onVoteSuccess(bounty)}
+          onVoteSuccess={handleVoteSuccess}
           size="large"
         />
         <a
@@ -75,8 +78,6 @@ const BountyDetailView: React.FC<BountyDetailViewProps> = ({
       )}
 
       <hr className="border-silver dark:border-indigo" />
-
-      <CommentSection bountyId={bounty.id} />
     </div>
   );
 };

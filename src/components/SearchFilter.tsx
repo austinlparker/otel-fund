@@ -1,12 +1,20 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SearchFilter() {
+interface SearchFilterProps {
+  initialQuery: string;
+}
+
+export default function SearchFilter({ initialQuery }: SearchFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [searchTerm, setSearchTerm] = useState(initialQuery);
+
+  useEffect(() => {
+    setSearchTerm(initialQuery);
+  }, [initialQuery]);
 
   const handleSearch = useCallback(
     (value: string) => {

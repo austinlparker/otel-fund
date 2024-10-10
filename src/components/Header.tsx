@@ -1,20 +1,17 @@
-"use client";
-
 import Image from "next/image";
-import AuthButton from "./AuthButton";
-import AddBountyButton from "./AddBountyButton";
-import SearchFilter from "./SearchFilter";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import DarkModeToggle from "./DarkModeToggle";
-import UserAvatar from "./UserAvatar";
+import SearchFilter from "./SearchFilter";
+import ClientHeader from "./ClientHeader";
 
-export default function Header() {
-  const { data: session } = useSession();
-  const searchParams = useSearchParams();
-  const initialQuery = searchParams.get("q") || "";
+interface HeaderProps {
+  showSearch?: boolean;
+  initialQuery?: string;
+}
 
+export default function Header({
+  showSearch = false,
+  initialQuery = "",
+}: HeaderProps) {
   return (
     <header className="bg-white dark:bg-slate shadow-sm">
       <div className="container mx-auto px-4 py-3">
@@ -35,23 +32,12 @@ export default function Header() {
               </h1>
             </Link>
           </div>
-          <div className="w-full md:w-1/2 lg:w-1/3">
-            <SearchFilter initialQuery={initialQuery} />
-          </div>
-          <div className="flex items-center space-x-4">
-            <AddBountyButton />
-            <DarkModeToggle />
-            <AuthButton />
-            {session?.user && <UserAvatar user={session.user} size="sm" />}
-            {session?.user?.isAdmin && (
-              <Link
-                href="/admin"
-                className="text-pacific hover:text-opacity-80"
-              >
-                Admin
-              </Link>
-            )}
-          </div>
+          {showSearch && (
+            <div className="w-full md:w-1/2 lg:w-1/3">
+              <SearchFilter initialQuery={initialQuery} />
+            </div>
+          )}
+          <ClientHeader />
         </div>
       </div>
     </header>

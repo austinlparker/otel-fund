@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma, User } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 
 const prisma = new PrismaClient();
@@ -96,10 +96,9 @@ async function generateUsers(count: number): Promise<Prisma.UserCreateInput[]> {
   const users: Prisma.UserCreateInput[] = [];
   for (let i = 0; i < count; i++) {
     const user: Prisma.UserCreateInput = {
-      name: faker.internet.userName(),
+      name: faker.person.fullName(),
       email: faker.internet.email(),
-      image: faker.image.avatar(),
-      isAdmin: false,
+      // Add other necessary fields
     };
     users.push(user);
   }
@@ -186,7 +185,7 @@ async function main() {
 }
 
 // Update the generateComments function to use the created users
-async function generateComments(bountyId: number, users: Prisma.User[]) {
+async function generateComments(bountyId: number, users: User[]) {
   const commentCount = faker.number.int({ min: 0, max: 5 });
   for (let i = 0; i < commentCount; i++) {
     const comment = await prisma.comment.create({

@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { GetBountiesResult, Bounty, SortOption } from "@/types";
+import { GetBountiesResult, Bounty, SortOption, Tag } from "@/types";
 import { Prisma } from "@prisma/client";
 
 export async function getBountiesForTag(
@@ -12,7 +12,7 @@ export async function getBountiesForTag(
   searchQuery?: string,
 ): Promise<GetBountiesResult> {
   let orderBy: Prisma.BountyOrderByWithRelationInput = {};
-  let where: Prisma.BountyWhereInput = {
+  const where: Prisma.BountyWhereInput = {
     tags: {
       some: {
         name: tag,
@@ -177,7 +177,9 @@ export async function searchBounties(
   };
 }
 
-export async function getAllTags() {
+export async function getAllTags(): Promise<
+  (Tag & { _count: { bounties: number } })[]
+> {
   const tags = await prisma.tag.findMany({
     include: {
       _count: {

@@ -2,16 +2,16 @@ import React from "react";
 import { Bounty } from "@/types";
 import VoteButton from "./VoteButton";
 import UserAvatar from "./UserAvatar";
+import Link from "next/link";
 import Tag from "./Tag";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 
 interface BountyListProps {
   bounties: Bounty[];
-  onBountyClick: (bountyId: number) => void;
 }
 
-const BountyList: React.FC<BountyListProps> = ({ bounties, onBountyClick }) => {
+const BountyList: React.FC<BountyListProps> = ({ bounties }) => {
   return (
     <div className="space-y-4">
       {bounties.length === 0 ? (
@@ -26,12 +26,13 @@ const BountyList: React.FC<BountyListProps> = ({ bounties, onBountyClick }) => {
           >
             <div className="flex flex-col sm:flex-row sm:items-start justify-between space-y-2 sm:space-y-0">
               <div className="flex-grow">
-                <h2
-                  className="text-lg font-semibold text-slate dark:text-white cursor-pointer hover:underline"
-                  onClick={() => bounty.id && onBountyClick(bounty.id)}
+                <Link
+                  href={`/bounty/${bounty.id}`}
+                  prefetch={false}
+                  className="text-lg font-semibold text-slate dark:text-white hover:underline"
                 >
                   {bounty.title}
-                </h2>
+                </Link>
                 <p className="text-sm text-slate dark:text-fog mt-1">
                   {bounty.description}
                 </p>
@@ -53,7 +54,7 @@ const BountyList: React.FC<BountyListProps> = ({ bounties, onBountyClick }) => {
               </div>
               <span className="flex items-center mt-2 sm:mt-0">
                 <FontAwesomeIcon icon={faComment} className="mr-1" />
-                {bounty.comments.length} comments
+                {bounty.comments?.length || 0} comments
               </span>
             </div>
           </div>

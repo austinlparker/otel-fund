@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { addBounty } from "@/app/actions";
+import { useRouter } from "next/navigation";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -18,17 +19,13 @@ function SubmitButton() {
   );
 }
 
-interface AddBountyFormProps {
-  onClose: () => void;
-}
-
-export default function AddBountyForm({ onClose }: AddBountyFormProps) {
+export default function AddBountyForm() {
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
     await addBounty(formData);
-    onClose();
   };
 
   const handleAddTag = (e: React.FormEvent) => {
@@ -119,7 +116,7 @@ export default function AddBountyForm({ onClose }: AddBountyFormProps) {
       <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
         <button
           type="button"
-          onClick={onClose}
+          onClick={() => router.back()}
           className="w-full sm:w-auto px-4 py-2 bg-silver dark:bg-slate text-slate dark:text-fog rounded-md hover:bg-opacity-90 transition-colors duration-200"
         >
           Cancel

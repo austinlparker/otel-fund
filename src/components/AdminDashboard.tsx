@@ -28,7 +28,10 @@ export default function AdminDashboard() {
         const data = await response.json();
         setDashboardData(data);
       } catch (err) {
-        setError(err.message);
+        console.error("Error fetching dashboard data:", err);
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred",
+        );
       } finally {
         setIsLoading(false);
       }
