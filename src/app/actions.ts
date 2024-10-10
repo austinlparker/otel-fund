@@ -80,7 +80,18 @@ export async function getBountyById(id: number): Promise<Bounty | null> {
       where: { id, hidden: false },
       include: {
         tags: true,
-        votes: true,
+        votes: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
         user: {
           select: {
             id: true,

@@ -10,6 +10,7 @@ import {
 import UserAvatar from "@/components/UserAvatar";
 import Tag from "./Tag";
 import VoteButton from "./VoteButton";
+import VoterAvatars from "./VoterAvatars";
 import { useRouter } from "next/navigation";
 
 interface BountyDetailViewProps {
@@ -18,6 +19,9 @@ interface BountyDetailViewProps {
 
 const BountyDetailView: React.FC<BountyDetailViewProps> = ({ bounty }) => {
   const router = useRouter();
+  const voters = bounty.votes
+    .map((vote) => vote.user)
+    .filter((user): user is NonNullable<typeof user> => user != null);
 
   const handleVoteSuccess = () => {
     router.refresh(); // This will re-fetch the data and update the UI
@@ -48,6 +52,7 @@ const BountyDetailView: React.FC<BountyDetailViewProps> = ({ bounty }) => {
           onVoteSuccess={handleVoteSuccess}
           size="large"
         />
+        <VoterAvatars voters={voters} maxDisplay={30} />
         <a
           href={bounty.repoLink}
           target="_blank"
