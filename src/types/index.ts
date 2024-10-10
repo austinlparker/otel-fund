@@ -1,26 +1,19 @@
 import {
   Bounty as PrismaBounty,
-  User,
+  User as PrismaUser,
   Tag as PrismaTag,
   Vote as PrismaVote,
-  Comment,
+  Comment as PrismaComment,
 } from "@prisma/client";
 
 export type SortOption = "new" | "hot" | "popular" | "all";
 
 export type Vote = PrismaVote;
+export type User = PrismaUser;
+export type Comment = PrismaComment;
 
 export type CommentWithReplies = Comment & {
-  author: {
-    id: string;
-    name: string | null;
-    email: string;
-    image: string | null;
-    emailVerified: Date | null;
-    isAdmin?: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
-  };
+  author: User;
   replies: CommentWithReplies[];
 };
 

@@ -6,7 +6,7 @@ import { voteForBounty } from "@/app/actions";
 import toast from "react-hot-toast";
 import { Bounty } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 interface VoteButtonProps {
   bounty: Bounty;
@@ -53,34 +53,23 @@ export default function VoteButton({
     }
   };
 
-  const buttonClasses =
-    size === "large"
-      ? "flex items-center space-x-2 bg-tango text-white px-4 py-2 rounded-md transition-all duration-200"
-      : "flex flex-col items-center";
-
-  const iconClasses =
-    size === "large"
-      ? "w-6 h-6"
-      : "w-6 h-6 text-tango hover:text-fog transition-colors duration-200";
-
-  const textClasses =
-    size === "large"
-      ? "text-white"
-      : "text-sm font-semibold text-slate dark:text-fog mt-1";
+  const baseClasses =
+    "flex items-center justify-center space-x-1 border border-tango text-tango hover:bg-tango hover:text-white transition-all duration-200";
+  const sizeClasses =
+    size === "large" ? "px-4 py-2 text-base" : "px-2 py-1 text-sm";
 
   return (
     <button
       onClick={handleVote}
       disabled={isVoting}
-      className={`${buttonClasses} ${isVoting ? "opacity-50" : "hover:bg-opacity-80"} ${isVoting ? "animate-pulse" : ""}`}
+      className={`${baseClasses} ${sizeClasses} ${isVoting ? "opacity-50 animate-pulse" : ""}`}
     >
       <FontAwesomeIcon
-        icon={faThumbsUp}
-        className={`${iconClasses} ${isVoting ? "animate-bounce" : ""}`}
+        icon={faArrowUp}
+        className={`${isVoting ? "animate-bounce" : ""}`}
       />
-      <span className={textClasses}>
-        {bounty.votes?.length || 0} {size === "large" ? "Votes" : ""}
-      </span>
+      <span>{bounty.votes?.length || 0}</span>
+      {size === "large" && <span>Votes</span>}
     </button>
   );
 }

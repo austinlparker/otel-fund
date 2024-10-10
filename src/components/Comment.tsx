@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CommentWithReplies } from "@/types";
 import ReplyButton from "./ReplyButton";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "@/components/UserAvatar";
 import AddCommentForm from "./AddCommentForm";
 
 interface CommentProps {
@@ -31,7 +31,7 @@ export default function Comment({
     setIsReplying(false);
   };
 
-  const authorName = comment.author?.name || "Anonymous";
+  const authorName = comment.author.name || "Anonymous";
 
   return (
     <div

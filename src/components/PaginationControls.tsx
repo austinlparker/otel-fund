@@ -27,43 +27,97 @@ export default function PaginationControls({
     [searchParams, tagName],
   );
 
+  const getPageNumbers = () => {
+    const delta = 4; // Number of pages to show on either side of the current page
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= currentPage - delta && i <= currentPage + delta)
+      ) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push("...");
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
   return (
-    <div className="flex justify-center items-center space-x-2 mt-4">
+    <div className="flex justify-center items-center space-x-2 mt-4 flex-wrap">
       {currentPage > 1 && (
-        <Link
+        <PageLink
           href={createPageURL(currentPage - 1)}
-          className="px-3 py-2 rounded-md bg-fog dark:bg-slate text-slate dark:text-white hover:bg-pacific hover:text-white transition-colors"
+          className="font-semibold"
         >
           Previous
-        </Link>
+        </PageLink>
       )}
 
-      {[...Array(totalPages)].map((_, index) => {
-        const pageNumber = index + 1;
-        return (
-          <Link
+      {getPageNumbers().map((pageNumber, index) =>
+        pageNumber === "..." ? (
+          <span key={`ellipsis-${index}`} className="px-3 py-2">
+            ...
+          </span>
+        ) : (
+          <PageLink
             key={pageNumber}
-            href={createPageURL(pageNumber)}
-            className={`px-3 py-2 rounded-md transition-colors ${
-              currentPage === pageNumber
-                ? "bg-pacific text-white"
-                : "bg-fog dark:bg-slate text-slate dark:text-white hover:bg-pacific hover:text-white"
-            }`}
-            aria-current={currentPage === pageNumber ? "page" : undefined}
+            href={createPageURL(pageNumber as number)}
+            className={
+              currentPage === pageNumber ? "bg-pacific text-white" : ""
+            }
+            ariaCurrent={currentPage === pageNumber ? "page" : undefined}
           >
             {pageNumber}
-          </Link>
-        );
-      })}
+          </PageLink>
+        ),
+      )}
 
       {currentPage < totalPages && (
-        <Link
+        <PageLink
           href={createPageURL(currentPage + 1)}
-          className="px-3 py-2 rounded-md bg-fog dark:bg-slate text-slate dark:text-white hover:bg-pacific hover:text-white transition-colors"
+          className="font-semibold"
         >
           Next
-        </Link>
+        </PageLink>
       )}
     </div>
   );
 }
+
+interface PageLinkProps {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  ariaCurrent?: "page" | undefined;
+}
+
+const PageLink = ({
+  href,
+  children,
+  className = "",
+  ariaCurrent,
+}: PageLinkProps) => (
+  <Link
+    href={href}
+    className={`px-3 py-2 rounded-md transition-colors bg-fog dark:bg-slate text-slate dark:text-white hover:bg-pacific hover:text-white ${className}`}
+    aria-current={ariaCurrent}
+  >
+    {children}
+  </Link>
+);

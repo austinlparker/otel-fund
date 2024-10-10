@@ -7,7 +7,7 @@ import {
   faExternalLinkAlt,
   faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "@/components/UserAvatar";
 import Tag from "./Tag";
 import VoteButton from "./VoteButton";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ const BountyDetailView: React.FC<BountyDetailViewProps> = ({ bounty }) => {
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
-        <UserAvatar user={bounty.user} size="lg" />
+        <UserAvatar user={bounty.user} size="lg" showName={true} />
         <div className="flex-grow w-full">
           <div className="bg-white dark:bg-slate shadow-md rounded-lg overflow-hidden">
             <div className="bg-pacific h-2"></div>

@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import AuthButton from "./AuthButton";
 import AddBountyButton from "./AddBountyButton";
 import DarkModeToggle from "./DarkModeToggle";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
 
 export default function ClientHeader() {
@@ -15,7 +15,9 @@ export default function ClientHeader() {
       <AddBountyButton />
       <DarkModeToggle />
       <AuthButton />
-      {session?.user && <UserAvatar user={session.user} size="sm" />}
+      {session?.user && (
+        <UserAvatar user={session.user} size="sm" showName={false} />
+      )}
       {session?.user?.isAdmin && (
         <Link href="/admin" className="text-pacific hover:text-opacity-80">
           Admin

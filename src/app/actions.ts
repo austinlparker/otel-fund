@@ -17,7 +17,9 @@ export async function getBounties(
   searchQuery?: string,
   tag?: string,
 ) {
-  const where: Prisma.BountyWhereInput = {};
+  const where: Prisma.BountyWhereInput = {
+    hidden: false,
+  };
   let orderBy: Prisma.BountyOrderByWithRelationInput = {};
 
   if (searchQuery) {
@@ -75,7 +77,7 @@ export async function getBounties(
 export async function getBountyById(id: number): Promise<Bounty | null> {
   try {
     const bounty = await prisma.bounty.findUnique({
-      where: { id },
+      where: { id, hidden: false },
       include: {
         tags: true,
         votes: true,
@@ -88,6 +90,7 @@ export async function getBountyById(id: number): Promise<Bounty | null> {
             image: true,
             isAdmin: true,
             createdAt: true,
+            disabled: true,
             updatedAt: true,
           },
         },
@@ -110,7 +113,7 @@ export async function getBountyById(id: number): Promise<Bounty | null> {
 
 export async function addBounty(formData: FormData) {
   const session = await auth();
-  if (!session?.user?.email) {
+  if (!session?.user?.id) {
     throw new Error("Unauthorized");
   }
 
@@ -124,7 +127,7 @@ export async function addBounty(formData: FormData) {
 
   const moderationResult = autoMod({
     content: description,
-    user: session.user.email,
+    user: session.user.email || "",
   });
   const status = moderationResultToBountyStatus(moderationResult);
 
@@ -134,8 +137,8 @@ export async function addBounty(formData: FormData) {
       description,
       repoLink,
       notes,
-      createdBy: session.user.email,
       status,
+      userId: session.user.id, // This is the correct way to associate the user
       hotScore: calculateHotScore(0, new Date()),
       tags: {
         connectOrCreate: tags.map((tagName) => ({
@@ -214,6 +217,9 @@ export async function addComment(formData: FormData) {
   if (!session?.user) {
     throw new Error("You must be logged in to comment");
   }
+  if (!session?.user.disabled) {
+    throw new Error("Your account can not create comments.");
+  }
 
   const content = formData.get("content") as string;
   const bountyId = parseInt(formData.get("bountyId") as string, 10);
@@ -223,6 +229,14 @@ export async function addComment(formData: FormData) {
 
   if (!content || !bountyId) {
     throw new Error("Missing required fields");
+  }
+
+  const bounty = await prisma.bounty.findFirst({
+    where: { id: bountyId, hidden: false },
+  });
+
+  if (!bounty) {
+    throw new Error("Bounty not found or is hidden");
   }
 
   const comment = await prisma.comment.create({
@@ -242,20 +256,9 @@ export async function getComments(
   bountyId: number,
 ): Promise<CommentWithReplies[]> {
   const comments = await prisma.comment.findMany({
-    where: { bountyId },
+    where: { bountyId, hidden: false },
     include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          emailVerified: true,
-          isAdmin: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      },
+      author: true,
     },
     orderBy: {
       createdAt: "desc",

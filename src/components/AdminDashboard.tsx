@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { User, Bounty } from "@prisma/client";
+import UserManagement from "./admin/UserManagement";
+import BountyManagement from "./admin/BountyManagement";
+import CommentManagement from "./admin/CommentManagement";
 
 interface DashboardData {
   totalUsers: number;
@@ -17,6 +20,9 @@ export default function AdminDashboard() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "users" | "bounties" | "comments"
+  >("overview");
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -55,39 +61,65 @@ export default function AdminDashboard() {
     <div className="p-6 bg-white dark:bg-slate text-slate dark:text-fog">
       <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <DashboardCard title="Total Users" value={dashboardData.totalUsers} />
-        <DashboardCard
-          title="Total Bounties"
-          value={dashboardData.totalBounties}
-        />
-        <DashboardCard
-          title="Pending Bounties"
-          value={dashboardData.pendingBounties}
-        />
+      <div className="mb-6">
+        <button
+          onClick={() => setActiveTab("overview")}
+          className={`mr-4 ${activeTab === "overview" ? "text-pacific" : ""}`}
+        >
+          Overview
+        </button>
+        <button
+          onClick={() => setActiveTab("users")}
+          className={`mr-4 ${activeTab === "users" ? "text-pacific" : ""}`}
+        >
+          Manage Users
+        </button>
+        <button
+          onClick={() => setActiveTab("bounties")}
+          className={`mr-4 ${activeTab === "bounties" ? "text-pacific" : ""}`}
+        >
+          Manage Bounties
+        </button>
+        <button
+          onClick={() => setActiveTab("comments")}
+          className={`${activeTab === "comments" ? "text-pacific" : ""}`}
+        >
+          Manage Comments
+        </button>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Recent Users</h2>
-        <UserList users={dashboardData.recentUsers} />
-      </div>
+      {activeTab === "overview" && (
+        <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <DashboardCard
+              title="Total Users"
+              value={dashboardData.totalUsers}
+            />
+            <DashboardCard
+              title="Total Bounties"
+              value={dashboardData.totalBounties}
+            />
+            <DashboardCard
+              title="Pending Bounties"
+              value={dashboardData.pendingBounties}
+            />
+          </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Recent Bounties</h2>
-        <BountyList bounties={dashboardData.recentBounties} />
-      </div>
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Recent Users</h2>
+            <UserList users={dashboardData.recentUsers} />
+          </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Admin Actions</h2>
-        <div className="space-x-4">
-          <button className="bg-pacific hover:bg-opacity-90 text-white px-4 py-2 rounded transition-colors duration-200">
-            Manage Users
-          </button>
-          <button className="bg-lime hover:bg-opacity-90 text-white px-4 py-2 rounded transition-colors duration-200">
-            Moderate Bounties
-          </button>
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Recent Bounties</h2>
+            <BountyList bounties={dashboardData.recentBounties} />
+          </div>
         </div>
-      </div>
+      )}
+
+      {activeTab === "users" && <UserManagement />}
+      {activeTab === "bounties" && <BountyManagement />}
+      {activeTab === "comments" && <CommentManagement />}
     </div>
   );
 }
