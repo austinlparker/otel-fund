@@ -1,17 +1,28 @@
 import React from "react";
-import { Bounty } from "@/types";
+import { Bounty, SortOption } from "@/types";
 import VoteButton from "./VoteButton";
 import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
 import Tag from "./Tag";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
+import { useSearchParams } from "next/navigation";
 
 interface BountyListProps {
   bounties: Bounty[];
+  currentSort: SortOption;
 }
 
-const BountyList: React.FC<BountyListProps> = ({ bounties }) => {
+const BountyList: React.FC<BountyListProps> = ({ bounties, currentSort }) => {
+  const searchParams = useSearchParams();
+
+  const createBountyLink = (bountyId: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("sort", currentSort);
+    const linkString = `/bounty/${bountyId}?${searchParams.toString()}`;
+    return linkString;
+  };
+
   return (
     <div className="space-y-4">
       {bounties.length === 0 ? (
@@ -28,7 +39,7 @@ const BountyList: React.FC<BountyListProps> = ({ bounties }) => {
               <div className="flex justify-between items-start">
                 <div className="flex-grow">
                   <Link
-                    href={`/bounty/${bounty.id}`}
+                    href={createBountyLink(bounty.id)}
                     prefetch={false}
                     className="text-lg font-semibold text-slate dark:text-white hover:underline"
                   >

@@ -29,8 +29,8 @@ export default function RootLayout({
       <body>
         <Providers>
           <div className="antialiased bg-fog dark:bg-slate text-slate dark:text-white">
-            {children}
             {modal}
+            {children}
             <Footer />
             <Toaster position="bottom-right" />
           </div>

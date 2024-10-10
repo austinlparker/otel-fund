@@ -8,8 +8,10 @@ import { Bounty } from "@/types";
 
 export default async function BountyDetailModal({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const bountyId = parseInt(params.id, 10);
   let bounty: Bounty | null;
@@ -24,9 +26,9 @@ export default async function BountyDetailModal({
   if (!bounty) {
     notFound();
   }
-
+  const closeHref = `/?${new URLSearchParams(searchParams as Record<string, string>).toString()}`;
   return (
-    <Modal title={bounty.title}>
+    <Modal title={bounty.title} closeHref={closeHref}>
       <BountyDetailView bounty={bounty} />
       <Suspense fallback={<div>Loading comments...</div>}>
         <CommentSection bountyId={bountyId} initialComments={bounty.comments} />
