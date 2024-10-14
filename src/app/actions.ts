@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Bounty, SortOption, CommentWithReplies } from "@/types";
+import {
+  Bounty,
+  SortOption,
+  CommentWithReplies,
+  GetBountiesResult,
+} from "@/types";
 import { autoMod, moderationResultToBountyStatus } from "@/lib/automod";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
@@ -309,4 +314,113 @@ export async function updateHotScores() {
       data: { hotScore },
     });
   }
+}
+
+export async function getBountiesForUser(
+  userId: string,
+  skip: number = 0,
+  take: number = 10,
+): Promise<GetBountiesResult> {
+  const [bounties, totalCount] = await prisma.$transaction([
+    prisma.bounty.findMany({
+      where: { userId },
+      skip,
+      take,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        createdAt: true,
+        votes: { select: { id: true } },
+      },
+    }),
+    prisma.bounty.count({ where: { userId } }),
+  ]);
+
+  return {
+    bounties: bounties as Bounty[],
+    totalCount,
+  };
+}
+
+export async function getCommentsForUser(
+  userId: string,
+): Promise<CommentWithReplies[]> {
+  const comments = await prisma.comment.findMany({
+    where: { authorId: userId },
+    orderBy: { createdAt: "desc" },
+    include: {
+      author: true,
+      bounty: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+    },
+  });
+
+  return comments.map((comment) => ({
+    ...comment,
+    replies: [],
+  }));
+}
+
+export async function getUserProfile(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      createdAt: true,
+    },
+  });
+}
+
+export async function getBountiesUserCommentedOn(
+  userId: string,
+  skip: number = 0,
+  take: number = 10,
+) {
+  const bounties = await prisma.bounty.findMany({
+    where: {
+      comments: {
+        some: {
+          authorId: userId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      status: true,
+      createdAt: true,
+      _count: {
+        select: { comments: true },
+      },
+    },
+    orderBy: {
+      comments: {
+        _count: "desc",
+      },
+    },
+    skip,
+    take,
+    distinct: ["id"],
+  });
+
+  const totalCount = await prisma.bounty.count({
+    where: {
+      comments: {
+        some: {
+          authorId: userId,
+        },
+      },
+    },
+  });
+
+  return { bounties, totalCount };
 }

@@ -147,7 +147,7 @@ async function main() {
         description,
         repoLink: faker.internet.url(),
         notes: faker.datatype.boolean() ? faker.lorem.paragraph() : null,
-        status: "MODERATION_AUTO_APPROVE",
+        status: "ACTIVE",
         hotScore: faker.number.float({ min: 0, max: 100 }),
         user: {
           connect: {

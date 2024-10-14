@@ -2,7 +2,7 @@ import Image from "next/image";
 import { User } from "../types";
 
 interface UserAvatarProps {
-  user?: User | null;
+  user?: Partial<User> | null;
   size?: "sm" | "md" | "lg";
   showName?: boolean;
 }

@@ -17,7 +17,9 @@ export default function ClientHeader() {
       <div className="flex-grow"></div>
       <DarkModeToggle />
       {session?.user && (
-        <UserAvatar user={session.user} size="sm" showName={false} />
+        <Link href={`/profile/${session.user.id}`}>
+          <UserAvatar user={session.user} size="sm" showName={false} />
+        </Link>
       )}
       <AuthButton />
       {session?.user?.isAdmin && (
