@@ -6,6 +6,7 @@ import AddBountyButton from "./AddBountyButton";
 import DarkModeToggle from "./DarkModeToggle";
 import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
+import { Button } from "./Button";
 
 export default function ClientHeader() {
   const { data: session } = useSession();
@@ -13,14 +14,17 @@ export default function ClientHeader() {
   return (
     <div className="flex items-center space-x-4">
       <AddBountyButton />
+      <div className="flex-grow"></div>
       <DarkModeToggle />
-      <AuthButton />
       {session?.user && (
         <UserAvatar user={session.user} size="sm" showName={false} />
       )}
+      <AuthButton />
       {session?.user?.isAdmin && (
-        <Link href="/admin" className="text-pacific hover:text-opacity-80">
-          Admin
+        <Link href="/admin" passHref>
+          <Button variant="secondary" className="text-sm py-1 px-2">
+            Admin
+          </Button>
         </Link>
       )}
     </div>

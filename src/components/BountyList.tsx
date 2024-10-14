@@ -33,7 +33,7 @@ const BountyList: React.FC<BountyListProps> = ({ bounties, currentSort }) => {
         bounties.map((bounty) => (
           <div
             key={bounty.id}
-            className="bg-white dark:bg-slate p-4 rounded-sm shadow-sm dark:shadow-tango"
+            className="bg-white dark:bg-sapphire_blue-800 p-4 rounded-sm shadow-sm"
           >
             <div className="flex flex-col space-y-3">
               <div className="flex justify-between items-start">
@@ -41,11 +41,11 @@ const BountyList: React.FC<BountyListProps> = ({ bounties, currentSort }) => {
                   <Link
                     href={createBountyLink(bounty.id)}
                     prefetch={false}
-                    className="text-lg font-semibold text-slate dark:text-white hover:underline"
+                    className="text-lg font-semibold text-sapphire_blue-900 dark:text-sapphire_blue-50 hover:underline"
                   >
                     {bounty.title}
                   </Link>
-                  <p className="text-sm text-slate dark:text-fog mt-1">
+                  <p className="text-sm text-sapphire_blue-700 dark:text-sapphire_blue-200 mt-1">
                     {bounty.description}
                   </p>
                 </div>

@@ -12,15 +12,15 @@ export default function SortFilter({
   onSortChange,
 }: SortFilterProps) {
   return (
-    <div className="flex space-x-2">
+    <div className="flex flex-wrap gap-2">
       {(["all", "new", "popular", "hot"] as SortOption[]).map((option) => (
         <button
           key={option}
           onClick={() => onSortChange(option)}
-          className={`px-3 py-2 rounded-md transition-colors ${
+          className={`px-4 py-2 rounded-md transition-all duration-200 text-sm font-medium ${
             currentSort === option
-              ? "bg-pacific text-white"
-              : "bg-fog dark:bg-slate text-slate dark:text-white hover:bg-pacific hover:text-white"
+              ? "bg-amber-500 text-white shadow-md"
+              : "bg-sapphire_blue-100 dark:bg-sapphire_blue-700 text-sapphire_blue-800 dark:text-sapphire_blue-100 hover:bg-amber-400 dark:hover:bg-amber-600 hover:text-white"
           }`}
         >
           {option.charAt(0).toUpperCase() + option.slice(1)}

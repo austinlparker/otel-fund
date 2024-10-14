@@ -82,29 +82,10 @@ export async function getBountyById(id: number): Promise<Bounty | null> {
         tags: true,
         votes: {
           include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                image: true,
-              },
-            },
+            user: true,
           },
         },
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            emailVerified: true,
-            image: true,
-            isAdmin: true,
-            createdAt: true,
-            disabled: true,
-            updatedAt: true,
-          },
-        },
+        user: true,
       },
     });
 
@@ -226,10 +207,10 @@ export async function voteForBounty(bountyId: number) {
 export async function addComment(formData: FormData) {
   const session = await auth();
   if (!session?.user) {
-    throw new Error("You must be logged in to comment");
+    throw new Error("NOT_LOGGED_IN");
   }
-  if (!session?.user.disabled) {
-    throw new Error("Your account can not create comments.");
+  if (session?.user.disabled) {
+    throw new Error("ACCOUNT_DISABLED");
   }
 
   const content = formData.get("content") as string;
@@ -239,7 +220,7 @@ export async function addComment(formData: FormData) {
     : undefined;
 
   if (!content || !bountyId) {
-    throw new Error("Missing required fields");
+    throw new Error("INTERNAL_ERROR");
   }
 
   const bounty = await prisma.bounty.findFirst({
@@ -247,7 +228,7 @@ export async function addComment(formData: FormData) {
   });
 
   if (!bounty) {
-    throw new Error("Bounty not found or is hidden");
+    throw new Error("BOUNTY_NOT_FOUND");
   }
 
   const comment = await prisma.comment.create({

@@ -3,6 +3,8 @@
 import { useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ErrorBoundary from "./ErrorBoundary";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -42,16 +44,29 @@ function ModalContent({ children, title }: ModalProps) {
   return (
     <div
       ref={overlay}
-      className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-sapphire_blue-900 bg-opacity-75 flex items-center justify-center p-4"
       onClick={onClick}
     >
       <div
         ref={wrapper}
-        className="bg-white dark:bg-slate rounded-lg p-6 w-full max-w-[95%] md:max-w-[80%] max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-sapphire_blue-800 rounded-lg shadow-lg w-full max-w-[95%] md:max-w-[80%] max-h-[90vh] overflow-y-auto relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {title && <h2 className="text-2xl font-bold mb-4">{title}</h2>}
-        {children}
+        <div className="sticky top-0 bg-white dark:bg-sapphire_blue-800 p-4 border-b border-sapphire_blue-200 dark:border-sapphire_blue-700 flex justify-between items-center">
+          {title && (
+            <h2 className="text-2xl font-bold text-sapphire_blue-900 dark:text-sapphire_blue-50">
+              {title}
+            </h2>
+          )}
+          <button
+            onClick={onDismiss}
+            className="text-sapphire_blue-500 hover:text-sapphire_blue-700 dark:text-sapphire_blue-300 dark:hover:text-sapphire_blue-100 transition-colors duration-200"
+            aria-label="Close modal"
+          >
+            <FontAwesomeIcon icon={faTimes} className="h-6 w-6" />
+          </button>
+        </div>
+        <div className="p-6">{children}</div>
       </div>
     </div>
   );
@@ -61,7 +76,9 @@ export default function Modal(props: ModalProps) {
   return (
     <ErrorBoundary
       fallback={
-        <div>There was an error loading the modal. Please try again.</div>
+        <div className="text-fuschia-500 dark:text-fuschia-300 p-4">
+          There was an error loading the modal. Please try again.
+        </div>
       }
     >
       <ModalContent {...props} />

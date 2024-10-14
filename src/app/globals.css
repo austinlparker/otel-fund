@@ -1,47 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-    --background: theme("colors.fog");
-    --foreground: #171717;
+    --background: theme("colors.sapphire_blue.50");
+    --foreground: theme("colors.sapphire_blue.900");
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background: theme("colors.slate");
-        --foreground: #ededed;
-    }
-}
-body {
-    color: theme("colors.slate");
-    background: theme("colors.fog");
-    font-family: "Open Sans", sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-@media (prefers-color-scheme: dark) {
-    body {
-        color: #fff;
-        background: #1b1b1b;
-    }
-}
-
-a {
-    color: #da552f;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-@layer utilities {
-    .text-balance {
-        text-wrap: balance;
+        --background: theme("colors.sapphire_blue.900");
+        --foreground: theme("colors.sapphire_blue.50");
     }
 }
 
@@ -51,7 +23,31 @@ body {
 }
 
 body {
-    @apply text-slate dark:text-white bg-fog dark:bg-slate;
+    font-family:
+        "Nunito",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        "Open Sans",
+        "Helvetica Neue",
+        sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    @apply text-sapphire_blue-900 bg-sapphire_blue-50 dark:text-sapphire_blue-50 dark:bg-sapphire_blue-900;
+}
+
+a {
+    @apply text-amber-700 dark:text-amber-300;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 h1 {
@@ -64,4 +60,10 @@ h2 {
 
 h3 {
     @apply text-lg sm:text-xl md:text-2xl font-semibold;
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
 }

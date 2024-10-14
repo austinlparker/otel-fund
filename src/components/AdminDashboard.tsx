@@ -5,6 +5,7 @@ import { User, Bounty } from "@prisma/client";
 import UserManagement from "./admin/UserManagement";
 import BountyManagement from "./admin/BountyManagement";
 import CommentManagement from "./admin/CommentManagement";
+import { Button } from "./Button";
 
 interface DashboardData {
   totalUsers: number;
@@ -46,51 +47,46 @@ export default function AdminDashboard() {
   }, []);
 
   if (isLoading) {
-    return <p className="text-slate dark:text-fog">Loading...</p>;
+    return (
+      <p className="text-sapphire_blue-600 dark:text-sapphire_blue-300">
+        Loading...
+      </p>
+    );
   }
 
   if (error) {
-    return <p className="text-tango">Error: {error}</p>;
+    return (
+      <p className="text-fuschia-600 dark:text-fuschia-300">Error: {error}</p>
+    );
   }
 
   if (!dashboardData) {
-    return <p className="text-slate dark:text-fog">No data available</p>;
+    return (
+      <p className="text-sapphire_blue-600 dark:text-sapphire_blue-300">
+        No data available
+      </p>
+    );
   }
 
   return (
-    <div className="p-6 bg-white dark:bg-slate text-slate dark:text-fog">
-      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+    <div className="p-6 bg-white dark:bg-sapphire_blue-900 text-sapphire_blue-900 dark:text-sapphire_blue-50">
+      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
-      <div className="mb-6">
-        <button
-          onClick={() => setActiveTab("overview")}
-          className={`mr-4 ${activeTab === "overview" ? "text-pacific" : ""}`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setActiveTab("users")}
-          className={`mr-4 ${activeTab === "users" ? "text-pacific" : ""}`}
-        >
-          Manage Users
-        </button>
-        <button
-          onClick={() => setActiveTab("bounties")}
-          className={`mr-4 ${activeTab === "bounties" ? "text-pacific" : ""}`}
-        >
-          Manage Bounties
-        </button>
-        <button
-          onClick={() => setActiveTab("comments")}
-          className={`${activeTab === "comments" ? "text-pacific" : ""}`}
-        >
-          Manage Comments
-        </button>
+      <div className="mb-8 flex space-x-4">
+        {["overview", "users", "bounties", "comments"].map((tab) => (
+          <Button
+            key={tab}
+            variant={activeTab === tab ? "primary" : "secondary"}
+            onClick={() => setActiveTab(tab as typeof activeTab)}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </Button>
+        ))}
       </div>
 
       {activeTab === "overview" && (
         <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <DashboardCard
               title="Total Users"
               value={dashboardData.totalUsers}
@@ -105,14 +101,16 @@ export default function AdminDashboard() {
             />
           </div>
 
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Recent Users</h2>
-            <UserList users={dashboardData.recentUsers} />
-          </div>
+          <div className="space-y-8">
+            <section>
+              <h2 className="text-2xl font-semibold mb-4">Recent Users</h2>
+              <UserList users={dashboardData.recentUsers} />
+            </section>
 
-          <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">Recent Bounties</h2>
-            <BountyList bounties={dashboardData.recentBounties} />
+            <section>
+              <h2 className="text-2xl font-semibold mb-4">Recent Bounties</h2>
+              <BountyList bounties={dashboardData.recentBounties} />
+            </section>
           </div>
         </div>
       )}
@@ -126,25 +124,28 @@ export default function AdminDashboard() {
 
 function DashboardCard({ title, value }: { title: string; value: number }) {
   return (
-    <div className="bg-fog dark:bg-indigo p-6 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-2 text-slate dark:text-fog">
+    <div className="bg-sapphire_blue-100 dark:bg-sapphire_blue-800 p-6 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold mb-2 text-sapphire_blue-800 dark:text-sapphire_blue-100">
         {title}
       </h3>
-      <p className="text-3xl font-bold text-slate dark:text-white">{value}</p>
+      <p className="text-3xl font-bold text-amber-600 dark:text-amber-300">
+        {value}
+      </p>
     </div>
   );
 }
 
 function UserList({ users }: { users: User[] }) {
   return (
-    <ul className="bg-fog dark:bg-indigo rounded-lg shadow-md">
+    <ul className="bg-sapphire_blue-50 dark:bg-sapphire_blue-800 rounded-lg shadow-md divide-y divide-sapphire_blue-200 dark:divide-sapphire_blue-700">
       {users.map((user) => (
-        <li
-          key={user.id}
-          className="p-4 border-b border-silver dark:border-slate last:border-b-0"
-        >
-          <p className="font-semibold text-slate dark:text-fog">{user.name}</p>
-          <p className="text-sm text-slate dark:text-silver">{user.email}</p>
+        <li key={user.id} className="p-4">
+          <p className="font-semibold text-sapphire_blue-800 dark:text-sapphire_blue-100">
+            {user.name}
+          </p>
+          <p className="text-sm text-sapphire_blue-600 dark:text-sapphire_blue-300">
+            {user.email}
+          </p>
         </li>
       ))}
     </ul>
@@ -153,16 +154,13 @@ function UserList({ users }: { users: User[] }) {
 
 function BountyList({ bounties }: { bounties: Bounty[] }) {
   return (
-    <ul className="bg-fog dark:bg-indigo rounded-lg shadow-md">
+    <ul className="bg-sapphire_blue-50 dark:bg-sapphire_blue-800 rounded-lg shadow-md divide-y divide-sapphire_blue-200 dark:divide-sapphire_blue-700">
       {bounties.map((bounty) => (
-        <li
-          key={bounty.id}
-          className="p-4 border-b border-silver dark:border-slate last:border-b-0"
-        >
-          <p className="font-semibold text-slate dark:text-fog">
+        <li key={bounty.id} className="p-4">
+          <p className="font-semibold text-sapphire_blue-800 dark:text-sapphire_blue-100">
             {bounty.title}
           </p>
-          <p className="text-sm text-slate dark:text-silver">
+          <p className="text-sm text-sapphire_blue-600 dark:text-sapphire_blue-300">
             Status: {bounty.status}
           </p>
         </li>

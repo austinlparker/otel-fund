@@ -52,12 +52,14 @@ export default function BountyListContainer({
   }, [searchParams, currentSort, handleSortChange]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 bg-white dark:bg-sapphire_blue-900 p-6 rounded-lg shadow-md">
       <SortFilter currentSort={currentSort} onSortChange={handleSortChange} />
       <div
-        className={`transition-opacity duration-300 ${isPending ? "opacity-50" : "opacity-100"}`}
+        className={`transition-opacity duration-300 ${
+          isPending ? "opacity-50" : "opacity-100"
+        }`}
       >
-        <BountyList bounties={initialBounties} />
+        <BountyList bounties={initialBounties} currentSort={currentSort} />
       </div>
       <PaginationControls
         currentPage={currentPage}

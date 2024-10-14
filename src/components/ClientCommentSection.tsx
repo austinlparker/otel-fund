@@ -4,6 +4,7 @@ import { useState } from "react";
 import AddCommentForm from "./AddCommentForm";
 import { CommentWithReplies } from "@/types";
 import Comment from "./Comment";
+import { Button } from "./Button";
 
 interface ClientCommentSectionProps {
   bountyId: number;
@@ -21,14 +22,14 @@ export default function ClientCommentSection({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 bg-white dark:bg-sapphire_blue-900 p-6 rounded-lg shadow-md">
+      <h2 className="text-2xl font-semibold text-sapphire_blue-800 dark:text-sapphire_blue-100">
+        Comments
+      </h2>
       {!isAddingComment ? (
-        <button
-          onClick={() => setIsAddingComment(true)}
-          className="px-4 py-2 bg-pacific hover:bg-tango text-white rounded-md transition-colors duration-200"
-        >
+        <Button variant="primary" onClick={() => setIsAddingComment(true)}>
           Add Comment
-        </button>
+        </Button>
       ) : (
         <AddCommentForm
           bountyId={bountyId}
@@ -36,11 +37,17 @@ export default function ClientCommentSection({
           onCancel={() => setIsAddingComment(false)}
         />
       )}
-      <div className="space-y-4">
-        {initialComments.map((comment) => (
-          <Comment key={comment.id} comment={comment} bountyId={bountyId} />
-        ))}
-      </div>
+      {initialComments.length > 0 ? (
+        <div className="space-y-6">
+          {initialComments.map((comment) => (
+            <Comment key={comment.id} comment={comment} bountyId={bountyId} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-sapphire_blue-600 dark:text-sapphire_blue-300 italic">
+          No comments yet. Be the first to comment!
+        </p>
+      )}
     </div>
   );
 }

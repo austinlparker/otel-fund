@@ -29,7 +29,7 @@ export default function UserAvatar({
   return (
     <div className="flex items-center">
       <div
-        className={`${sizeClasses[size]} rounded-full overflow-hidden bg-indigo flex items-center justify-center text-white`}
+        className={`${sizeClasses[size]} rounded-full overflow-hidden bg-amber-500 dark:bg-amber-600 flex items-center justify-center text-amber-950 dark:text-amber-50 shadow-sm`}
       >
         {user?.image ? (
           <Image
@@ -40,11 +40,13 @@ export default function UserAvatar({
             className="w-full h-full object-cover"
           />
         ) : (
-          <span>{initials}</span>
+          <span className="font-medium">{initials}</span>
         )}
       </div>
       {showName && user?.name && (
-        <span className="ml-2 text-slate dark:text-fog">{user.name}</span>
+        <span className="ml-2 text-sapphire_blue-800 dark:text-sapphire_blue-100 font-medium">
+          {user.name}
+        </span>
       )}
     </div>
   );

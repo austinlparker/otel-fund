@@ -33,29 +33,45 @@ export default function Comment({
 
   const authorName = comment.author.name || "Anonymous";
 
+  const getBgClass = (depth: number) => {
+    const lightClasses = [
+      "bg-sapphire_blue-50",
+      "bg-sapphire_blue-100",
+      "bg-sapphire_blue-200",
+    ];
+    const darkClasses = [
+      "dark:bg-sapphire_blue-800",
+      "dark:bg-sapphire_blue-700",
+      "dark:bg-sapphire_blue-600",
+    ];
+    const index = Math.min(depth, 2);
+    return `${lightClasses[index]} ${darkClasses[index]}`;
+  };
+
   return (
     <div
       className={`
       relative
       p-4
       mb-4
-      bg-white dark:bg-slate
+      ${getBgClass(depth)}
       rounded-lg
-      ${depth > 0 ? "ml-4 border-l-2 border-pacific" : ""}
+      ${depth > 0 ? `ml-${Math.min(depth * 4, 16)} border-l-2 border-amber-500` : ""}
+      transition-colors duration-200
     `}
     >
       <div className="flex items-start space-x-3">
         <UserAvatar user={comment.author} size="sm" />
         <div className="flex-grow">
           <div className="flex items-center space-x-2 mb-2">
-            <span className="font-medium text-slate dark:text-fog">
+            <span className="font-medium text-sapphire_blue-800 dark:text-sapphire_blue-100">
               {authorName}
             </span>
-            <span className="text-xs text-silver dark:text-fog">
+            <span className="text-xs text-sapphire_blue-500 dark:text-sapphire_blue-300">
               {new Date(comment.createdAt).toLocaleDateString()}
             </span>
           </div>
-          <p className="text-sm text-slate dark:text-fog mb-3">
+          <p className="text-sm text-sapphire_blue-700 dark:text-sapphire_blue-200 mb-3 leading-relaxed">
             {comment.content}
           </p>
           <div className="flex items-center space-x-2">

@@ -28,11 +28,40 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>
-          <div className="antialiased bg-fog dark:bg-slate text-slate dark:text-white">
+          <div className="antialiased">
             {modal}
             {children}
             <Footer />
-            <Toaster position="bottom-right" />
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                className: "",
+                style: {
+                  background: "var(--toast-bg)",
+                  color: "var(--toast-text)",
+                  boxShadow:
+                    "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                },
+                success: {
+                  iconTheme: {
+                    primary: "#10B981",
+                    secondary: "white",
+                  },
+                },
+                error: {
+                  iconTheme: {
+                    primary: "#EF4444",
+                    secondary: "white",
+                  },
+                },
+                loading: {
+                  iconTheme: {
+                    primary: "#3B82F6",
+                    secondary: "white",
+                  },
+                },
+              }}
+            />
           </div>
         </Providers>
         <script
@@ -43,6 +72,9 @@ export default function RootLayout({
                 if (darkMode === 'true') {
                   document.documentElement.classList.add('dark');
                 }
+                // Set toast colors based on dark mode
+                document.documentElement.style.setProperty('--toast-bg', darkMode === 'true' ? '#1E293B' : '#FFFFFF');
+                document.documentElement.style.setProperty('--toast-text', darkMode === 'true' ? '#F1F5F9' : '#1E293B');
               })();
             `,
           }}

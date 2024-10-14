@@ -4,18 +4,15 @@ import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { addBounty } from "@/app/actions";
 import { useRouter } from "next/navigation";
+import { Button } from "./Button";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="px-4 py-2 bg-pacific hover:bg-opacity-90 text-white rounded-md disabled:opacity-50 transition-colors duration-200"
-    >
+    <Button variant="primary" type="submit" disabled={pending}>
       {pending ? "Submitting..." : "Submit"}
-    </button>
+    </Button>
   );
 }
 
@@ -37,9 +34,15 @@ export default function AddBountyForm() {
   };
 
   return (
-    <form action={handleSubmit} className="space-y-4 text-slate dark:text-fog">
+    <form
+      action={handleSubmit}
+      className="space-y-6 max-w-2xl mx-auto p-6 bg-white dark:bg-sapphire_blue-800 rounded-lg shadow-md"
+    >
       <div>
-        <label htmlFor="title" className="block text-sm font-medium">
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-sapphire_blue-700 dark:text-sapphire_blue-200 mb-1"
+        >
           Title
         </label>
         <input
@@ -47,22 +50,29 @@ export default function AddBountyForm() {
           id="title"
           name="title"
           required
-          className="mt-1 block w-full rounded-md border-silver dark:border-slate bg-white dark:bg-slate text-slate dark:text-fog shadow-sm"
+          className="mt-1 block w-full rounded-md border-sapphire_blue-300 dark:border-sapphire_blue-600 bg-sapphire_blue-50 dark:bg-sapphire_blue-700 text-sapphire_blue-900 dark:text-sapphire_blue-50 shadow-sm focus:ring-2 focus:ring-amber-500"
         />
       </div>
       <div>
-        <label htmlFor="description" className="block text-sm font-medium">
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-sapphire_blue-700 dark:text-sapphire_blue-200 mb-1"
+        >
           Description
         </label>
         <textarea
           id="description"
           name="description"
           required
-          className="mt-1 block w-full rounded-md border-silver dark:border-slate bg-white dark:bg-slate text-slate dark:text-fog shadow-sm"
+          rows={4}
+          className="mt-1 block w-full rounded-md border-sapphire_blue-300 dark:border-sapphire_blue-600 bg-sapphire_blue-50 dark:bg-sapphire_blue-700 text-sapphire_blue-900 dark:text-sapphire_blue-50 shadow-sm focus:ring-2 focus:ring-amber-500"
         />
       </div>
       <div>
-        <label htmlFor="repoLink" className="block text-sm font-medium">
+        <label
+          htmlFor="repoLink"
+          className="block text-sm font-medium text-sapphire_blue-700 dark:text-sapphire_blue-200 mb-1"
+        >
           Repository Link
         </label>
         <input
@@ -70,26 +80,32 @@ export default function AddBountyForm() {
           id="repoLink"
           name="repoLink"
           required
-          className="mt-1 block w-full rounded-md border-silver dark:border-slate bg-white dark:bg-slate text-slate dark:text-fog shadow-sm"
+          className="mt-1 block w-full rounded-md border-sapphire_blue-300 dark:border-sapphire_blue-600 bg-sapphire_blue-50 dark:bg-sapphire_blue-700 text-sapphire_blue-900 dark:text-sapphire_blue-50 shadow-sm focus:ring-2 focus:ring-amber-500"
         />
       </div>
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium">
+        <label
+          htmlFor="notes"
+          className="block text-sm font-medium text-sapphire_blue-700 dark:text-sapphire_blue-200 mb-1"
+        >
           Additional Notes
         </label>
         <textarea
           id="notes"
           name="notes"
-          className="mt-1 block w-full rounded-md border-silver dark:border-slate bg-white dark:bg-slate text-slate dark:text-fog shadow-sm"
+          rows={3}
+          className="mt-1 block w-full rounded-md border-sapphire_blue-300 dark:border-sapphire_blue-600 bg-sapphire_blue-50 dark:bg-sapphire_blue-700 text-sapphire_blue-900 dark:text-sapphire_blue-50 shadow-sm focus:ring-2 focus:ring-amber-500"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium">Tags</label>
+        <label className="block text-sm font-medium text-sapphire_blue-700 dark:text-sapphire_blue-200 mb-1">
+          Tags
+        </label>
         <div className="flex flex-wrap gap-2 mt-1">
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="px-2 py-1 bg-pacific text-white rounded-full text-sm"
+              className="px-2 py-1 bg-amber-500 text-white rounded-full text-sm"
             >
               {tag}
             </span>
@@ -102,25 +118,17 @@ export default function AddBountyForm() {
             value={newTag}
             onChange={(e) => setNewTag(e.target.value)}
             placeholder="Add a tag"
-            className="flex-grow rounded-md border-silver dark:border-slate bg-white dark:bg-slate text-slate dark:text-fog shadow-sm"
+            className="flex-grow rounded-md border-sapphire_blue-300 dark:border-sapphire_blue-600 bg-sapphire_blue-50 dark:bg-sapphire_blue-700 text-sapphire_blue-900 dark:text-sapphire_blue-50 shadow-sm focus:ring-2 focus:ring-amber-500"
           />
-          <button
-            type="button"
-            onClick={handleAddTag}
-            className="px-4 py-2 bg-lime hover:bg-opacity-90 text-white rounded-md transition-colors duration-200"
-          >
+          <Button variant="secondary" onClick={handleAddTag}>
             Add Tag
-          </button>
+          </Button>
         </div>
       </div>
       <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="w-full sm:w-auto px-4 py-2 bg-silver dark:bg-slate text-slate dark:text-fog rounded-md hover:bg-opacity-90 transition-colors duration-200"
-        >
+        <Button variant="secondary" onClick={() => router.back()}>
           Cancel
-        </button>
+        </Button>
         <SubmitButton />
       </div>
     </form>

@@ -28,7 +28,7 @@ export default function PaginationControls({
   );
 
   const getPageNumbers = () => {
-    const delta = 4; // Number of pages to show on either side of the current page
+    const delta = 5;
     const range: number[] = [];
     const rangeWithDots: (number | string)[] = [];
     let l: number | undefined;
@@ -59,7 +59,10 @@ export default function PaginationControls({
   };
 
   return (
-    <div className="flex justify-center items-center space-x-2 mt-4 flex-wrap">
+    <nav
+      className="flex justify-center items-center space-x-1 mt-8 flex-wrap"
+      aria-label="Pagination"
+    >
       {currentPage > 1 && (
         <PageLink
           href={createPageURL(currentPage - 1)}
@@ -71,7 +74,10 @@ export default function PaginationControls({
 
       {getPageNumbers().map((pageNumber, index) =>
         pageNumber === "..." ? (
-          <span key={`ellipsis-${index}`} className="px-3 py-2">
+          <span
+            key={`ellipsis-${index}`}
+            className="px-3 py-2 text-sapphire_blue-400 dark:text-sapphire_blue-500"
+          >
             ...
           </span>
         ) : (
@@ -79,7 +85,7 @@ export default function PaginationControls({
             key={pageNumber}
             href={createPageURL(pageNumber as number)}
             className={
-              currentPage === pageNumber ? "bg-pacific text-white" : ""
+              currentPage === pageNumber ? "bg-amber-500 text-white" : ""
             }
             ariaCurrent={currentPage === pageNumber ? "page" : undefined}
           >
@@ -96,7 +102,7 @@ export default function PaginationControls({
           Next
         </PageLink>
       )}
-    </div>
+    </nav>
   );
 }
 
@@ -115,7 +121,7 @@ const PageLink = ({
 }: PageLinkProps) => (
   <Link
     href={href}
-    className={`px-3 py-2 rounded-md transition-colors bg-fog dark:bg-slate text-slate dark:text-white hover:bg-pacific hover:text-white ${className}`}
+    className={`px-3 py-2 rounded-md transition-colors bg-sapphire_blue-100 dark:bg-sapphire_blue-800 text-sapphire_blue-800 dark:text-sapphire_blue-100 hover:bg-amber-500 hover:text-white ${className}`}
     aria-current={ariaCurrent}
   >
     {children}

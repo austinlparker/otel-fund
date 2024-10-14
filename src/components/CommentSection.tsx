@@ -11,8 +11,7 @@ export default function CommentSection({
   initialComments,
 }: CommentSectionProps) {
   return (
-    <div className="mt-6 bg-white dark:bg-slate rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4">Comments</h3>
+    <div className="mt-8 bg-white dark:bg-sapphire_blue-900 rounded-lg shadow-md">
       <ClientCommentSection
         bountyId={bountyId}
         initialComments={initialComments}

@@ -9,10 +9,10 @@ export default function ReplyButton({ onClick }: ReplyButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="text-xs text-pacific hover:text-tango transition-colors duration-200 flex items-center"
+      className="text-sm text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-200 transition-colors duration-200 flex items-center"
     >
-      <FontAwesomeIcon icon={faReply} className="mr-1" />
-      Reply
+      <FontAwesomeIcon icon={faReply} className="mr-2 text-xs" />
+      <span className="font-medium">Reply</span>
     </button>
   );
 }

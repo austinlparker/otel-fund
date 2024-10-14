@@ -54,15 +54,17 @@ export default function VoteButton({
   };
 
   const baseClasses =
-    "flex items-center justify-center space-x-1 border border-tango text-tango hover:bg-tango hover:text-white transition-all duration-200";
+    "flex items-center justify-center space-x-2 border rounded-md transition-all duration-200 font-medium";
   const sizeClasses =
-    size === "large" ? "px-4 py-2 text-base" : "px-2 py-1 text-sm";
+    size === "large" ? "px-4 py-2 text-base" : "px-3 py-1.5 text-sm";
+  const colorClasses =
+    "bg-white dark:bg-sapphire_blue-800 border-amber-500 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white dark:hover:bg-amber-600";
 
   return (
     <button
       onClick={handleVote}
       disabled={isVoting}
-      className={`${baseClasses} ${sizeClasses} ${isVoting ? "opacity-50 animate-pulse" : ""}`}
+      className={`${baseClasses} ${sizeClasses} ${colorClasses} ${isVoting ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       <FontAwesomeIcon
         icon={faArrowUp}

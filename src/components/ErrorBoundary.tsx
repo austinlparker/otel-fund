@@ -33,12 +33,17 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="error-boundary">
-          <h2>Something went wrong.</h2>
-          <details style={{ whiteSpace: "pre-wrap" }}>
-            {this.state.error && this.state.error.toString()}
+        <div className="error-boundary p-6 bg-fuschia-50 dark:bg-fuschia-900 text-fuschia-900 dark:text-fuschia-50 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold mb-4">Something went wrong</h2>
+          <details className="mb-4">
+            <summary className="cursor-pointer font-semibold mb-2">
+              Error details
+            </summary>
+            <pre className="whitespace-pre-wrap bg-white dark:bg-fuschia-800 p-4 rounded-md overflow-auto">
+              {this.state.error && this.state.error.toString()}
+            </pre>
           </details>
-          {this.props.fallback}
+          <div className="error-fallback">{this.props.fallback}</div>
         </div>
       );
     }

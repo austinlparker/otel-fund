@@ -16,18 +16,18 @@ const VoterAvatars: React.FC<VoterAvatarsProps> = ({
 
   return (
     <div className="flex items-center">
-      <div className="flex -space-x-2 overflow-hidden">
-        {displayedVoters.map((voter, index) => (
+      <div className="flex -space-x-3 overflow-hidden">
+        {displayedVoters.map((voter) => (
           <div
             key={voter.id}
-            className="inline-block ring-2 ring-white dark:ring-slate rounded-full"
+            className="inline-block ring-2 ring-white dark:ring-sapphire_blue-800 rounded-full shadow-sm hover:z-10 transition-transform duration-200 hover:scale-110"
           >
             <UserAvatar user={voter} size="sm" showName={false} />
           </div>
         ))}
       </div>
       {remainingCount > 0 && (
-        <div className="ml-2 text-sm text-slate dark:text-fog">
+        <div className="ml-3 text-sm font-medium text-sapphire_blue-600 dark:text-sapphire_blue-300">
           +{remainingCount} more
         </div>
       )}

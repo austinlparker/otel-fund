@@ -98,7 +98,6 @@ async function generateUsers(count: number): Promise<Prisma.UserCreateInput[]> {
     const user: Prisma.UserCreateInput = {
       name: faker.person.fullName(),
       email: faker.internet.email(),
-      // Add other necessary fields
     };
     users.push(user);
   }
@@ -148,7 +147,6 @@ async function main() {
         description,
         repoLink: faker.internet.url(),
         notes: faker.datatype.boolean() ? faker.lorem.paragraph() : null,
-        createdBy: faker.helpers.arrayElement(createdUsers).id,
         status: "MODERATION_AUTO_APPROVE",
         hotScore: faker.number.float({ min: 0, max: 100 }),
         user: {

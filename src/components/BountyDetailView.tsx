@@ -12,6 +12,8 @@ import Tag from "./Tag";
 import VoteButton from "./VoteButton";
 import VoterAvatars from "./VoterAvatars";
 import { useRouter } from "next/navigation";
+import { Button } from "./Button";
+import { User } from "@/types";
 
 interface BountyDetailViewProps {
   bounty: Bounty;
@@ -19,26 +21,27 @@ interface BountyDetailViewProps {
 
 const BountyDetailView: React.FC<BountyDetailViewProps> = ({ bounty }) => {
   const router = useRouter();
-  const voters = bounty.votes
+  const voters: User[] = bounty.votes
     .map((vote) => vote.user)
     .filter((user): user is NonNullable<typeof user> => user != null);
 
   const handleVoteSuccess = () => {
     router.refresh(); // This will re-fetch the data and update the UI
   };
+
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
+    <div className="p-4 sm:p-6 space-y-8 bg-white dark:bg-sapphire_blue-900 rounded-lg shadow-md">
+      <div className="flex flex-col sm:flex-row items-start space-y-4 sm:space-y-0 sm:space-x-6">
         <UserAvatar user={bounty.user} size="lg" showName={true} />
         <div className="flex-grow w-full">
-          <div className="bg-white dark:bg-slate shadow-md rounded-lg overflow-hidden">
-            <div className="bg-pacific h-2"></div>
-            <div className="p-4">
+          <div className="bg-sapphire_blue-50 dark:bg-sapphire_blue-800 shadow-md rounded-lg overflow-hidden">
+            <div className="bg-amber-500 h-2"></div>
+            <div className="p-6">
               <FontAwesomeIcon
                 icon={faQuoteLeft}
-                className="text-pacific text-2xl mb-2"
+                className="text-amber-500 text-2xl mb-3"
               />
-              <p className="text-slate dark:text-fog text-lg">
+              <p className="text-sapphire_blue-800 dark:text-sapphire_blue-100 text-lg leading-relaxed">
                 {bounty.description}
               </p>
             </div>
@@ -53,18 +56,20 @@ const BountyDetailView: React.FC<BountyDetailViewProps> = ({ bounty }) => {
           size="large"
         />
         <VoterAvatars voters={voters} maxDisplay={30} />
-        <a
+        <Button
+          variant="secondary"
+          as="a"
           href={bounty.repoLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-pacific text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition-colors duration-200 w-full sm:w-auto text-center"
+          className="w-full sm:w-auto text-center"
         >
           <FontAwesomeIcon icon={faExternalLinkAlt} className="mr-2" />
           View Repository
-        </a>
+        </Button>
       </div>
 
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap gap-2">
         {bounty.tags.map((tag) => (
           <Tag key={tag.id} name={tag.name} />
         ))}
@@ -72,17 +77,19 @@ const BountyDetailView: React.FC<BountyDetailViewProps> = ({ bounty }) => {
 
       {bounty.notes && (
         <>
-          <hr className="border-silver dark:border-indigo" />
+          <hr className="border-sapphire_blue-200 dark:border-sapphire_blue-700" />
           <div>
-            <h3 className="text-lg font-semibold mb-2 text-slate dark:text-fog">
+            <h3 className="text-xl font-semibold mb-3 text-sapphire_blue-800 dark:text-sapphire_blue-100">
               Extended Description
             </h3>
-            <p className="text-slate dark:text-fog">{bounty.notes}</p>
+            <p className="text-sapphire_blue-700 dark:text-sapphire_blue-200 leading-relaxed">
+              {bounty.notes}
+            </p>
           </div>
         </>
       )}
 
-      <hr className="border-silver dark:border-indigo" />
+      <hr className="border-sapphire_blue-200 dark:border-sapphire_blue-700" />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "./Button";
 import { useSession } from "next-auth/react";
 
 export default function AddBountyButton() {
@@ -11,12 +12,8 @@ export default function AddBountyButton() {
   }
 
   return (
-    <Link
-      href="/add-bounty"
-      prefetch={false}
-      className="bg-tango text-white px-4 py-2 rounded-md hover:bg-opacity-90 font-semibold"
-    >
-      + Add Bounty
+    <Link href="/add-bounty" prefetch={false}>
+      <Button variant="primary"> + Add Bounty </Button>
     </Link>
   );
 }

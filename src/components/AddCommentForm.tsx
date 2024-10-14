@@ -4,6 +4,8 @@ import { useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { addComment } from "@/app/actions";
 import { useRouter } from "next/navigation";
+import { Button } from "./Button";
+import toast from "react-hot-toast";
 
 interface AddCommentFormProps {
   bountyId: number;
@@ -16,13 +18,9 @@ function SubmitButton({ parentId }: { parentId?: number }) {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="px-4 py-2 bg-pacific hover:bg-tango text-white rounded-md transition-colors duration-200 disabled:opacity-50"
-    >
+    <Button variant="primary" type="submit" disabled={pending}>
       {pending ? "Posting..." : parentId ? "Post Reply" : "Post Comment"}
-    </button>
+    </Button>
   );
 }
 
@@ -36,9 +34,24 @@ export default function AddCommentForm({
   const router = useRouter();
 
   async function handleSubmit(formData: FormData) {
-    await addComment(formData);
-    formRef.current?.reset();
-    onCommentAdded();
+    try {
+      await addComment(formData);
+      toast.success("Comment posted successfully");
+      formRef.current?.reset();
+      if (onCommentAdded) {
+        onCommentAdded();
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === "NOT_LOGGED_IN") {
+          toast.error("You need to be logged in to post a comment");
+        } else if (error.message === "ACCOUNT_DISABLED") {
+          toast.error("Your account has been disabled.");
+        } else {
+          toast.error("An unknown error occured.");
+        }
+      }
+    }
     router.refresh();
   }
 
@@ -48,20 +61,16 @@ export default function AddCommentForm({
       {parentId && <input type="hidden" name="parentId" value={parentId} />}
       <textarea
         name="content"
-        className="w-full p-2 border rounded-md bg-fog dark:bg-slate text-slate dark:text-fog placeholder-silver dark:placeholder-indigo border-silver dark:border-indigo focus:border-pacific focus:ring focus:ring-pacific focus:ring-opacity-50 resize-none"
+        className="w-full p-3 border rounded-md bg-sapphire_blue-50 dark:bg-sapphire_blue-700 text-sapphire_blue-900 dark:text-sapphire_blue-50 placeholder-sapphire_blue-400 dark:placeholder-sapphire_blue-300 border-sapphire_blue-300 dark:border-sapphire_blue-600 focus:border-amber-500 focus:ring focus:ring-amber-500 focus:ring-opacity-50 resize-none transition-colors duration-200"
         placeholder={parentId ? "Write a reply..." : "Add a comment..."}
         rows={4}
         required
       />
-      <div className="flex justify-end space-x-2">
+      <div className="flex justify-end space-x-3">
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors duration-200"
-          >
+          <Button variant="secondary" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         )}
         <SubmitButton parentId={parentId} />
       </div>

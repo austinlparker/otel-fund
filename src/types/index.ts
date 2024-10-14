@@ -17,12 +17,12 @@ export type CommentWithReplies = Comment & {
   replies: CommentWithReplies[];
 };
 
-export type Bounty = PrismaBounty & {
-  tags: PrismaTag[];
-  votes: PrismaVote[];
-  comments: CommentWithReplies[];
+export interface Bounty extends PrismaBounty {
+  tags: Tag[];
+  votes: (Vote & { user: User | null })[];
   user: User | null;
-};
+  comments: CommentWithReplies[];
+}
 
 export interface GetBountiesResult {
   bounties: Bounty[];
