@@ -42,12 +42,12 @@ const Footer = () => {
               href="/tag"
               className="mx-2 my-1 text-sapphire_blue-700 dark:text-sapphire_blue-200 hover:text-amber-500"
             >
-              Tags
+              Tag Index
             </Link>
           </nav>
         </div>
         <div className="mt-4 text-center text-sm text-sapphire_blue-700 dark:text-sapphire_blue-200">
-          © {new Date().getFullYear()} OpenTelemetry Fund. All rights reserved.
+          © {new Date().getFullYear()} syzygetic.dev. All rights reserved.
         </div>
       </div>
     </footer>

@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import {
   Bounty,
   User,
-  Comment,
+  //Comment,
   CommentWithReplies,
   BountyStatus,
 } from "@/types";
@@ -68,7 +68,11 @@ export async function getBounties(): Promise<Bounty[]> {
   const bounties = await prisma.bounty.findMany({
     include: {
       tags: true,
-      votes: true,
+      votes: {
+        include: {
+          user: true, // Include user information for each vote
+        },
+      },
       comments: {
         include: {
           author: true,
@@ -100,6 +104,10 @@ export async function getBounties(): Promise<Bounty[]> {
           replies: [], // You might need to fetch replies separately if needed
         }),
       ),
+      votes: bounty.votes.map((vote) => ({
+        ...vote,
+        user: vote.user as User | null,
+      })),
     }),
   );
 }
@@ -132,20 +140,22 @@ export async function toggleBountyVisibility(bountyId: number) {
   return updatedBounty;
 }
 
-export async function getComments(): Promise<Comment[]> {
+export async function getComments(): Promise<CommentWithReplies[]> {
   await checkAdminAuth();
-  return prisma.comment.findMany({
+  const comments = await prisma.comment.findMany({
     include: {
-      author: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-        },
-      },
+      author: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
+
+  return comments.map((comment) => ({
+    ...comment,
+    author: comment.author,
+    replies: [], // We're not fetching replies for the admin view
+  }));
 }
 
 export async function toggleCommentVisibility(commentId: number) {
