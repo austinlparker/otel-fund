@@ -71,6 +71,10 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  githubUrl   String?
+  paymentLink String?
+  socialLinks Json?
 }
 
 model Account {

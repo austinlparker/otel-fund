@@ -1,58 +1,82 @@
 import { BountyStatus } from "@/types";
+import { Filter } from "bad-words";
+import natural from "natural";
 
-interface Moderatable {
-  content: string;
-  user: string;
-  // Add other relevant fields that might be used for moderation
-}
-
-// Enum for moderation results
 export enum ModerationResult {
   APPROVE = "APPROVE",
   REJECT = "REJECT",
   UNSURE = "UNSURE",
 }
 
-// Configuration for automod rules
-interface AutoModConfig {
-  bannedWords: string[];
-  minContentLength: number;
-  maxContentLength: number;
-  // Add other configuration options as needed
+export enum ContentType {
+  BOUNTY = "BOUNTY",
+  COMMENT = "COMMENT",
+  USER_PROFILE = "USER_PROFILE",
 }
 
-// Default configuration
+interface Moderatable {
+  content: string;
+  user: string;
+  type: ContentType;
+}
+
+interface AutoModConfig {
+  minContentLength: Record<ContentType, number>;
+  maxContentLength: Record<ContentType, number>;
+  toxicityThreshold: number;
+}
+
 const defaultConfig: AutoModConfig = {
-  bannedWords: ["spam", "scam", "inappropriate"],
-  minContentLength: 10,
-  maxContentLength: 1000,
+  minContentLength: {
+    [ContentType.BOUNTY]: 20,
+    [ContentType.COMMENT]: 5,
+    [ContentType.USER_PROFILE]: 10,
+  },
+  maxContentLength: {
+    [ContentType.BOUNTY]: 2000,
+    [ContentType.COMMENT]: 500,
+    [ContentType.USER_PROFILE]: 1000,
+  },
+  toxicityThreshold: 0.7,
 };
+
+const filter = new Filter();
+const classifier = new natural.BayesClassifier();
+
+classifier.addDocument("This is a great project!", "positive");
+classifier.addDocument("I love this idea", "positive");
+classifier.addDocument("Thanks for the suggestion", "positive");
+classifier.addDocument("You suck, this is a waste", "negative");
+classifier.addDocument("This is useless", "negative");
+classifier.addDocument("I hate this", "negative");
+classifier.train();
 
 export function autoMod<T extends Moderatable>(
   item: T,
   config: AutoModConfig = defaultConfig,
 ): ModerationResult {
-  const { content, user } = item;
+  const { content, type } = item;
 
-  if (user === "austin@ap2.io") {
-    return ModerationResult.APPROVE;
-  }
-
+  // Check content length
   if (
-    content.length < config.minContentLength ||
-    content.length > config.maxContentLength
+    content.length < config.minContentLength[type] ||
+    content.length > config.maxContentLength[type]
   ) {
     return ModerationResult.REJECT;
   }
 
-  // Check for banned words
-  const lowerContent = content.toLowerCase();
-  for (const word of config.bannedWords) {
-    if (lowerContent.includes(word.toLowerCase())) {
-      return ModerationResult.REJECT;
-    }
+  // Check for profanity
+  if (filter.isProfane(content)) {
+    return ModerationResult.REJECT;
   }
 
+  // Use the classifier to determine sentiment
+  const classification = classifier.classify(content);
+  if (classification === "negative") {
+    return ModerationResult.UNSURE;
+  }
+
+  // If we've made it this far, approve the content
   return ModerationResult.APPROVE;
 }
 
@@ -61,7 +85,7 @@ export function moderationResultToBountyStatus(
 ): BountyStatus {
   switch (result) {
     case ModerationResult.APPROVE:
-      return BountyStatus.MODERATION_AUTO_APPROVE;
+      return BountyStatus.ACTIVE;
     case ModerationResult.REJECT:
       return BountyStatus.MODERATION_AUTO_REJECT;
     case ModerationResult.UNSURE:

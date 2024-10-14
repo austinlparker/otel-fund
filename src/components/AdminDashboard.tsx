@@ -5,6 +5,7 @@ import { User, Bounty } from "@prisma/client";
 import UserManagement from "./admin/UserManagement";
 import BountyManagement from "./admin/BountyManagement";
 import CommentManagement from "./admin/CommentManagement";
+import FlaggedContentReview from "./admin/FlaggedContentReview";
 import { Button } from "./Button";
 
 interface DashboardData {
@@ -22,7 +23,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<
-    "overview" | "users" | "bounties" | "comments"
+    "overview" | "users" | "bounties" | "comments" | "flagged"
   >("overview");
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function AdminDashboard() {
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
       <div className="mb-8 flex space-x-4">
-        {["overview", "users", "bounties", "comments"].map((tab) => (
+        {["overview", "users", "bounties", "comments", "flagged"].map((tab) => (
           <Button
             key={tab}
             variant={activeTab === tab ? "primary" : "secondary"}
@@ -118,6 +119,7 @@ export default function AdminDashboard() {
       {activeTab === "users" && <UserManagement />}
       {activeTab === "bounties" && <BountyManagement />}
       {activeTab === "comments" && <CommentManagement />}
+      {activeTab === "flagged" && <FlaggedContentReview />}
     </div>
   );
 }

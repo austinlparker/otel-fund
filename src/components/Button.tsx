@@ -6,6 +6,7 @@ type ButtonVariant = "primary" | "secondary" | "danger";
 interface BaseButtonProps {
   variant?: ButtonVariant;
   as?: "button" | "a";
+  disabled?: boolean;
 }
 
 type ButtonAsButtonProps = BaseButtonProps &
@@ -26,6 +27,7 @@ export function Button({
   variant = "primary",
   as = "button",
   className: propClassName,
+  disabled,
   ...props
 }: ButtonProps) {
   const baseClasses = "px-4 py-2 rounded-md transition-colors duration-200";
@@ -38,11 +40,16 @@ export function Button({
       "bg-fuschia-500 hover:bg-fuschia-600 text-white dark:bg-fuschia-600 dark:hover:bg-fuschia-700",
   };
 
-  const className = `${baseClasses} ${variantClasses[variant]} ${propClassName || ""}`;
+  const disabledClass = disabled ? "opacity-50 cursor-not-allowed" : "";
+  const className = `${baseClasses} ${variantClasses[variant]} ${disabledClass} ${propClassName || ""}`;
 
   if (as === "a") {
     const { href, ...restProps } = props as ButtonAsAnchorProps;
-    return (
+    return disabled ? (
+      <span className={className} {...restProps}>
+        {children}
+      </span>
+    ) : (
       <Link href={href} className={className} {...restProps}>
         {children}
       </Link>
@@ -50,7 +57,11 @@ export function Button({
   }
 
   return (
-    <button className={className} {...(props as ButtonAsButtonProps)}>
+    <button
+      disabled={disabled}
+      className={className}
+      {...(props as ButtonAsButtonProps)}
+    >
       {children}
     </button>
   );

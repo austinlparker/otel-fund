@@ -8,7 +8,12 @@ import {
   CommentWithReplies,
   GetBountiesResult,
 } from "@/types";
-import { autoMod, moderationResultToBountyStatus } from "@/lib/automod";
+import {
+  autoMod,
+  moderationResultToBountyStatus,
+  ContentType,
+  ModerationResult,
+} from "@/lib/automod";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { calculateHotScore } from "@/lib/hotScore";
@@ -123,6 +128,7 @@ export async function addBounty(formData: FormData) {
     .map((tag) => tag.trim());
 
   const moderationResult = autoMod({
+    type: ContentType.BOUNTY,
     content: description,
     user: session.user.email || "",
   });
@@ -219,6 +225,14 @@ export async function addComment(formData: FormData) {
   }
 
   const content = formData.get("content") as string;
+  const moderationResult = autoMod({
+    content,
+    user: session.user.email || "",
+    type: ContentType.COMMENT,
+  });
+  if (moderationResult === ModerationResult.REJECT) {
+    throw new Error("COMMENT_REJECTED");
+  }
   const bountyId = parseInt(formData.get("bountyId") as string, 10);
   const parentId = formData.get("parentId")
     ? parseInt(formData.get("parentId") as string, 10)
@@ -242,6 +256,7 @@ export async function addComment(formData: FormData) {
       authorId: session.user.id,
       bountyId,
       parentId,
+      hidden: moderationResult === ModerationResult.UNSURE,
     },
   });
 
@@ -376,6 +391,9 @@ export async function getUserProfile(userId: string) {
       email: true,
       image: true,
       createdAt: true,
+      githubUrl: true,
+      socialLinks: true,
+      paymentLink: true,
     },
   });
 }
@@ -423,4 +441,44 @@ export async function getBountiesUserCommentedOn(
   });
 
   return { bounties, totalCount };
+}
+
+export async function updateUserProfile(formData: FormData) {
+  const userId = formData.get("userId") as string;
+  const name = formData.get("name") as string;
+  const githubUrl = formData.get("githubUrl") as string;
+  const paymentLink = formData.get("paymentLink") as string;
+  const socialLinksJson = formData.get("socialLinks") as string;
+
+  const profileContent = `${name} ${githubUrl} ${paymentLink} ${socialLinksJson}`;
+  const moderationResult = autoMod({
+    content: profileContent,
+    user: userId,
+    type: ContentType.USER_PROFILE,
+  });
+
+  if (moderationResult === ModerationResult.REJECT) {
+    return {
+      message: "Profile update rejected due to inappropriate content",
+      success: false,
+    };
+  }
+
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name,
+        githubUrl,
+        paymentLink,
+        socialLinks: socialLinksJson,
+      },
+    });
+
+    revalidatePath(`/profile/${userId}`);
+    return { message: "Profile updated successfully", success: true };
+  } catch (error) {
+    console.error("Failed to update profile:", error);
+    return { message: "Failed to update profile", success: false };
+  }
 }

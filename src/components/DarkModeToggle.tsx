@@ -6,8 +6,10 @@ import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
 
 const DarkModeToggle = () => {
   const [darkMode, setDarkMode] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const isDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(isDarkMode);
     if (isDarkMode) {
@@ -21,10 +23,16 @@ const DarkModeToggle = () => {
     document.documentElement.classList.toggle("dark");
   };
 
+  if (!isMounted) {
+    return null; // or a placeholder
+  }
+
   return (
     <button
       onClick={toggleDarkMode}
-      className="relative w-14 h-7 rounded-full bg-sapphire_blue-200 dark:bg-sapphire_blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50"
+      className={`relative w-14 h-7 rounded-full bg-sapphire_blue-200 dark:bg-sapphire_blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50 ${
+        darkMode ? "bg-sapphire_blue-700" : "bg-sapphire_blue-200"
+      }`}
       aria-label="Toggle dark mode"
     >
       <div

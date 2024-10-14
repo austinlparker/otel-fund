@@ -47,6 +47,8 @@ export default function AddCommentForm({
           toast.error("You need to be logged in to post a comment");
         } else if (error.message === "ACCOUNT_DISABLED") {
           toast.error("Your account has been disabled.");
+        } else if (error.message === "COMMENT_REJECTED") {
+          toast.error("Your comment has been rejected by our content policy.");
         } else {
           toast.error("An unknown error occured.");
         }

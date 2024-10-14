@@ -60,7 +60,7 @@ const BountyList: React.FC<BountyListProps> = ({ bounties, currentSort }) => {
               <div className="flex flex-wrap -mx-1">
                 {bounty.tags.map((tag) => (
                   <div key={tag.id} className="px-1 mb-1">
-                    <Tag name={tag.name} />
+                    <Tag name={tag.name} asLink={false} />
                   </div>
                 ))}
               </div>

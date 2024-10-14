@@ -31,6 +31,9 @@ export async function getUsers(): Promise<User[]> {
       disabled: true,
       createdAt: true,
       updatedAt: true,
+      githubUrl: true,
+      paymentLink: true,
+      socialLinks: true,
     },
   });
 }
@@ -89,6 +92,9 @@ export async function getBounties(): Promise<Bounty[]> {
           disabled: true,
           createdAt: true,
           updatedAt: true,
+          githubUrl: true,
+          paymentLink: true,
+          socialLinks: true,
         },
       },
     },
@@ -170,4 +176,71 @@ export async function toggleCommentVisibility(commentId: number) {
 
   revalidatePath("/admin");
   return updatedComment;
+}
+
+export async function getFlaggedContent() {
+  await checkAdminAuth();
+
+  const flaggedBounties = await prisma.bounty.findMany({
+    where: { status: "MODERATION_AUTO_UNSURE" },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      createdAt: true,
+      user: { select: { id: true, name: true, email: true } },
+    },
+  });
+
+  const flaggedComments = await prisma.comment.findMany({
+    where: { hidden: true },
+    select: {
+      id: true,
+      content: true,
+      createdAt: true,
+      author: { select: { id: true, name: true, email: true } },
+    },
+  });
+
+  return [
+    ...flaggedBounties.map((b) => ({
+      ...b,
+      type: "BOUNTY",
+      content: b.title + ": " + b.description,
+    })),
+    ...flaggedComments.map((c) => ({ ...c, type: "COMMENT", user: c.author })),
+  ];
+}
+
+export async function reviewFlaggedContent(
+  id: string,
+  type: string,
+  decision: "approve" | "reject",
+) {
+  await checkAdminAuth();
+
+  switch (type) {
+    case "BOUNTY":
+      await prisma.bounty.update({
+        where: { id: parseInt(id) },
+        data: {
+          status: decision === "approve" ? "ACTIVE" : "MODERATION_AUTO_REJECT",
+        },
+      });
+      break;
+    case "COMMENT":
+      if (decision === "approve") {
+        await prisma.comment.update({
+          where: { id: parseInt(id) },
+          data: { hidden: false },
+        });
+      } else {
+        await prisma.comment.delete({
+          where: { id: parseInt(id) },
+        });
+      }
+      break;
+    default:
+      throw new Error("Invalid content type");
+  }
 }
