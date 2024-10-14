@@ -10,7 +10,7 @@ const Footer = () => {
               href="/"
               className="text-lg font-semibold text-sapphire_blue-900 dark:text-sapphire_blue-50"
             >
-              OpenTelemetry Fund
+              syzygetic.dev
             </Link>
           </div>
           <nav className="flex flex-wrap justify-center md:justify-end">

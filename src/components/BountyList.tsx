@@ -27,7 +27,7 @@ const BountyList: React.FC<BountyListProps> = ({ bounties, currentSort }) => {
     <div className="space-y-4">
       {bounties.length === 0 ? (
         <div className="bg-white dark:bg-sapphire_blue-800 p-4 rounded-sm shadow-sm text-center text-sapphire_blue-900 dark:text-sapphire_blue-50">
-          No bounties found
+          No bounties found. Why not create one?
         </div>
       ) : (
         bounties.map((bounty) => (
