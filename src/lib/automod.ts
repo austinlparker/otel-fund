@@ -1,6 +1,7 @@
 import { BountyStatus } from "@/types";
 import { Filter } from "bad-words";
-import natural from "natural";
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+import OpenAI from "openai";
 
 export enum ModerationResult {
   APPROVE = "APPROVE",
@@ -41,43 +42,132 @@ const defaultConfig: AutoModConfig = {
 };
 
 const filter = new Filter();
-const classifier = new natural.BayesClassifier();
+let openaiClient: OpenAI | null = null;
 
-classifier.addDocument("This is a great project!", "positive");
-classifier.addDocument("I love this idea", "positive");
-classifier.addDocument("Thanks for the suggestion", "positive");
-classifier.addDocument("You suck, this is a waste", "negative");
-classifier.addDocument("This is useless", "negative");
-classifier.addDocument("I hate this", "negative");
-classifier.train();
+function getOpenAIClient(): OpenAI | null {
+  if (typeof process === "undefined" || !process.env.OPENAI_API_KEY) {
+    console.warn("OpenAI API key is not available");
+    return null;
+  }
 
-export function autoMod<T extends Moderatable>(
+  if (!openaiClient) {
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+
+  return openaiClient;
+}
+
+async function analyzeWithOpenAI(
+  text: string,
+): Promise<"positive" | "negative" | "neutral"> {
+  const client = getOpenAIClient();
+  if (!client) {
+    console.warn(
+      "OpenAI client is not available. Defaulting to neutral sentiment.",
+    );
+    return "neutral";
+  }
+
+  try {
+    const response = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a sentiment analysis tool. Respond with only 'positive', 'negative', or 'neutral'.",
+        },
+        {
+          role: "user",
+          content: `Analyze the sentiment of this text: "${text}"`,
+        },
+      ],
+      max_tokens: 1,
+    });
+
+    const sentiment = response.choices[0].message.content?.toLowerCase().trim();
+    if (
+      sentiment === "positive" ||
+      sentiment === "negative" ||
+      sentiment === "neutral"
+    ) {
+      return sentiment;
+    }
+    return "neutral";
+  } catch (error) {
+    console.error("Error analyzing sentiment with OpenAI:", error);
+    return "neutral";
+  }
+}
+
+export async function autoMod<T extends Moderatable>(
   item: T,
   config: AutoModConfig = defaultConfig,
-): ModerationResult {
-  const { content, type } = item;
+): Promise<ModerationResult> {
+  const tracer = trace.getTracer("automod-tracer");
 
-  // Check content length
-  if (
-    content.length < config.minContentLength[type] ||
-    content.length > config.maxContentLength[type]
-  ) {
-    return ModerationResult.REJECT;
-  }
+  return tracer.startActiveSpan("autoMod", async (span) => {
+    try {
+      const { content, type } = item;
 
-  // Check for profanity
-  if (filter.isProfane(content)) {
-    return ModerationResult.REJECT;
-  }
+      span.setAttribute("content.type", type);
+      span.setAttribute("content.length", content.length);
 
-  // Use the classifier to determine sentiment
-  const classification = classifier.classify(content);
-  if (classification === "negative") {
-    return ModerationResult.UNSURE;
-  }
+      // Check content length
+      const lengthResult = tracer.startActiveSpan(
+        "checkContentLength",
+        (lengthSpan) => {
+          if (
+            content.length < config.minContentLength[type] ||
+            content.length > config.maxContentLength[type]
+          ) {
+            lengthSpan.setStatus({ code: SpanStatusCode.ERROR });
+            lengthSpan.end();
+            return ModerationResult.REJECT;
+          }
+          lengthSpan.end();
+          return null;
+        },
+      );
 
-  // If we've made it this far, approve the content
-  return ModerationResult.APPROVE;
+      if (lengthResult) return lengthResult;
+
+      // Check for profanity
+      const profanityResult = tracer.startActiveSpan(
+        "checkProfanity",
+        (profanitySpan) => {
+          if (filter.isProfane(content)) {
+            profanitySpan.setStatus({ code: SpanStatusCode.ERROR });
+            profanitySpan.end();
+            return ModerationResult.REJECT;
+          }
+          profanitySpan.end();
+          return null;
+        },
+      );
+
+      if (profanityResult) return profanityResult;
+
+      return tracer.startActiveSpan(
+        "analyzeSentiment",
+        async (sentimentSpan) => {
+          const sentiment = await analyzeWithOpenAI(content);
+          sentimentSpan.setAttribute("sentiment.classification", sentiment);
+          if (sentiment === "negative") {
+            sentimentSpan.end();
+            return ModerationResult.UNSURE;
+          }
+          sentimentSpan.end();
+
+          return ModerationResult.APPROVE;
+        },
+      );
+    } finally {
+      span.end();
+    }
+  });
 }
 
 export function moderationResultToBountyStatus(
@@ -90,5 +180,8 @@ export function moderationResultToBountyStatus(
       return BountyStatus.MODERATION_AUTO_REJECT;
     case ModerationResult.UNSURE:
       return BountyStatus.MODERATION_AUTO_UNSURE;
+    default:
+      // This should never happen, but TypeScript likes exhaustive checks
+      throw new Error(`Unknown ModerationResult: ${result}`);
   }
 }

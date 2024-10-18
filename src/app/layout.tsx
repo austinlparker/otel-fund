@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 import Footer from "@/components/Footer";
+import Observability from "../components/Observability";
 import { Toaster } from "react-hot-toast";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import { PublicEnvScript } from "next-runtime-env";
 
 config.autoAddCss = false;
 
@@ -24,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <PublicEnvScript />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
@@ -80,6 +83,7 @@ export default function RootLayout({
           }}
         />
       </body>
+      <Observability />
     </html>
   );
 }

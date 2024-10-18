@@ -10,9 +10,9 @@ import {
 } from "@/types";
 import {
   autoMod,
-  moderationResultToBountyStatus,
   ContentType,
   ModerationResult,
+  moderationResultToBountyStatus,
 } from "@/lib/automod";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
@@ -127,7 +127,7 @@ export async function addBounty(formData: FormData) {
     .split(",")
     .map((tag) => tag.trim());
 
-  const moderationResult = autoMod({
+  const moderationResult = await autoMod({
     type: ContentType.BOUNTY,
     content: description,
     user: session.user.email || "",
@@ -225,7 +225,7 @@ export async function addComment(formData: FormData) {
   }
 
   const content = formData.get("content") as string;
-  const moderationResult = autoMod({
+  const moderationResult = await autoMod({
     content,
     user: session.user.email || "",
     type: ContentType.COMMENT,
@@ -451,7 +451,7 @@ export async function updateUserProfile(formData: FormData) {
   const socialLinksJson = formData.get("socialLinks") as string;
 
   const profileContent = `${name} ${githubUrl} ${paymentLink} ${socialLinksJson}`;
-  const moderationResult = autoMod({
+  const moderationResult = await autoMod({
     content: profileContent,
     user: userId,
     type: ContentType.USER_PROFILE,

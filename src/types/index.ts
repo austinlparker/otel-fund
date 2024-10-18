@@ -9,8 +9,13 @@ import {
 export type SortOption = "new" | "hot" | "popular" | "all";
 
 export type Vote = PrismaVote;
-export type User = PrismaUser;
-export type Comment = PrismaComment;
+export interface User extends PrismaUser {}
+export interface Bounty extends PrismaBounty {
+  user: User | null;
+}
+export interface Comment extends PrismaComment {
+  author: User;
+}
 
 export type CommentWithReplies = Comment & {
   author: User;
@@ -44,3 +49,29 @@ export enum BountyStatus {
   ACTIVE = "ACTIVE",
   COMPLETED = "COMPLETED",
 }
+
+export type FlaggedContentType = "BOUNTY" | "COMMENT" | "USER_PROFILE";
+
+export interface BaseFlaggedItem {
+  id: number;
+  type: FlaggedContentType;
+  content: string;
+  user: User | null;
+  createdAt: Date;
+}
+
+export interface FlaggedBounty extends BaseFlaggedItem {
+  type: "BOUNTY";
+  title: string;
+  description: string;
+}
+
+export interface FlaggedComment extends BaseFlaggedItem {
+  type: "COMMENT";
+}
+
+export interface FlaggedUserProfile extends BaseFlaggedItem {
+  type: "USER_PROFILE";
+}
+
+export type FlaggedItem = FlaggedBounty | FlaggedComment | FlaggedUserProfile;

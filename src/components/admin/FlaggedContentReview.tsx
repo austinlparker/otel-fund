@@ -1,18 +1,7 @@
 import { useState, useEffect } from "react";
 import { getFlaggedContent, reviewFlaggedContent } from "@/app/adminActions";
 import { Button } from "../Button";
-
-interface FlaggedItem {
-  id: string;
-  type: "BOUNTY" | "COMMENT" | "USER_PROFILE";
-  content: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  createdAt: string;
-}
+import { FlaggedItem } from "@/types";
 
 export default function FlaggedContentReview() {
   const [flaggedItems, setFlaggedItems] = useState<FlaggedItem[]>([]);
@@ -35,7 +24,7 @@ export default function FlaggedContentReview() {
   }
 
   async function handleReview(
-    id: string,
+    id: number,
     type: string,
     decision: "approve" | "reject",
   ) {
@@ -63,7 +52,8 @@ export default function FlaggedContentReview() {
             >
               <p className="font-semibold">{item.type}</p>
               <p className="text-sm text-sapphire_blue-600 dark:text-sapphire_blue-300">
-                By {item.user.name} ({item.user.email})
+                By {item.user?.name || "Unknown"} (
+                {item.user?.email || "No email"})
               </p>
               <p className="mt-2">{item.content}</p>
               <div className="mt-4 flex space-x-2">

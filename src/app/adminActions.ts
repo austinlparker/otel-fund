@@ -4,10 +4,13 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {
   Bounty,
-  User,
-  //Comment,
-  CommentWithReplies,
   BountyStatus,
+  User,
+  Comment,
+  CommentWithReplies,
+  FlaggedItem,
+  FlaggedBounty,
+  FlaggedComment,
 } from "@/types";
 import { revalidatePath } from "next/cache";
 
@@ -178,42 +181,43 @@ export async function toggleCommentVisibility(commentId: number) {
   return updatedComment;
 }
 
-export async function getFlaggedContent() {
-  await checkAdminAuth();
-
+export async function getFlaggedContent(): Promise<FlaggedItem[]> {
   const flaggedBounties = await prisma.bounty.findMany({
     where: { status: "MODERATION_AUTO_UNSURE" },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      createdAt: true,
-      user: { select: { id: true, name: true, email: true } },
-    },
+    include: { user: true },
   });
 
   const flaggedComments = await prisma.comment.findMany({
     where: { hidden: true },
-    select: {
-      id: true,
-      content: true,
-      createdAt: true,
-      author: { select: { id: true, name: true, email: true } },
-    },
+    include: { author: true },
   });
 
   return [
-    ...flaggedBounties.map((b) => ({
-      ...b,
-      type: "BOUNTY",
-      content: b.title + ": " + b.description,
-    })),
-    ...flaggedComments.map((c) => ({ ...c, type: "COMMENT", user: c.author })),
+    ...flaggedBounties.map(
+      (b): FlaggedBounty => ({
+        id: b.id,
+        type: "BOUNTY",
+        content: `${b.title}: ${b.description}`,
+        user: b.user,
+        createdAt: b.createdAt,
+        title: b.title,
+        description: b.description,
+      }),
+    ),
+    ...flaggedComments.map(
+      (c): FlaggedComment => ({
+        id: c.id,
+        type: "COMMENT",
+        content: c.content,
+        user: c.author,
+        createdAt: c.createdAt,
+      }),
+    ),
   ];
 }
 
 export async function reviewFlaggedContent(
-  id: string,
+  id: number,
   type: string,
   decision: "approve" | "reject",
 ) {
@@ -222,7 +226,7 @@ export async function reviewFlaggedContent(
   switch (type) {
     case "BOUNTY":
       await prisma.bounty.update({
-        where: { id: parseInt(id) },
+        where: { id: id },
         data: {
           status: decision === "approve" ? "ACTIVE" : "MODERATION_AUTO_REJECT",
         },
@@ -231,12 +235,12 @@ export async function reviewFlaggedContent(
     case "COMMENT":
       if (decision === "approve") {
         await prisma.comment.update({
-          where: { id: parseInt(id) },
+          where: { id: id },
           data: { hidden: false },
         });
       } else {
         await prisma.comment.delete({
-          where: { id: parseInt(id) },
+          where: { id: id },
         });
       }
       break;
