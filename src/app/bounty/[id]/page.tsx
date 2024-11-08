@@ -5,11 +5,12 @@ import { getBountyById, getComments } from "@/app/actions";
 import { Suspense } from "react";
 import DefaultHeader from "@/components/DefaultHeader";
 
-export default async function BountyDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function BountyDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const bountyId = parseInt(await params.id, 10);
   const bounty = await getBountyById(bountyId);
 

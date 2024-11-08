@@ -6,13 +6,13 @@ import { Suspense } from "react";
 import CommentSection from "@/components/CommentSection";
 import { Bounty } from "@/types";
 
-export default async function BountyDetailModal({
-  params,
-  //searchParams,
-}: {
-  params: { id: string };
-  //searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function BountyDetailModal(
+  props: {
+    params: Promise<{ id: string }>;
+    //searchParams: { [key: string]: string | string[] | undefined };
+  }
+) {
+  const params = await props.params;
   const bountyId = parseInt(params.id, 10);
   let bounty: Bounty | null;
 

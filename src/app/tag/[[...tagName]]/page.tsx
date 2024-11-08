@@ -6,11 +6,13 @@ import Link from "next/link";
 import DefaultHeader from "@/components/DefaultHeader";
 
 interface TagPageProps {
-  params: { tagName?: string[] };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ tagName?: string[] }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function TagPage({ params, searchParams }: TagPageProps) {
+export default async function TagPage(props: TagPageProps) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const tagName = params.tagName?.[0];
   const page =
     typeof searchParams.page === "string" ? parseInt(searchParams.page, 10) : 1;

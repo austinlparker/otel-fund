@@ -8,11 +8,12 @@ import UserComments from "@/components/UserComments";
 import { getUserProfile } from "@/app/actions";
 import { Button } from "@/components/Button";
 
-export default async function ProfilePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function ProfilePage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const session = await auth();
   const user = await getUserProfile(params.id);
 

@@ -5,15 +5,16 @@ import BountyListContainer from "@/components/BountyListContainer";
 import HomeHeader from "@/components/HomeHeader";
 
 interface HomeProps {
-  searchParams: {
+  searchParams: Promise<{
     q?: string;
     sort?: string;
     page?: string;
     itemsPerPage?: string;
-  };
+  }>;
 }
 
-export default async function Home({ searchParams }: HomeProps) {
+export default async function Home(props: HomeProps) {
+  const searchParams = await props.searchParams;
   const searchQuery = searchParams.q || "";
   const sortOption = (searchParams.sort as SortOption) || "all";
   const page = Math.max(1, parseInt(searchParams.page || "1", 10));
