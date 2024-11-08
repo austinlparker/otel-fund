@@ -10,7 +10,7 @@ export default async function BountyDetailPage({
 }: {
   params: { id: string };
 }) {
-  const bountyId = parseInt(params.id, 10);
+  const bountyId = parseInt(await params.id, 10);
   const bounty = await getBountyById(bountyId);
 
   if (!bounty) {

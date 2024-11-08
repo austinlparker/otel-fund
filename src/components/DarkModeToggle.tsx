@@ -40,7 +40,10 @@ const DarkModeToggle = () => {
           darkMode ? "translate-x-7" : "translate-x-0"
         }`}
       />
-      <div className="absolute inset-0 flex items-center justify-between px-1.5">
+      <div
+        className="absolute inset-0 flex items-center justify-between px-1.5"
+        id="dark-mode-toggle"
+      >
         <FontAwesomeIcon
           icon={faSun}
           className={`w-3 h-3 text-amber-500 transition-opacity duration-300 ${
