@@ -10,6 +10,11 @@ export type SortOption = "new" | "hot" | "popular" | "all";
 
 export type Vote = PrismaVote;
 export interface User extends PrismaUser {}
+declare global {
+  interface Window {
+    __HONEYCOMB_SDK__?: any;
+  }
+}
 export interface Bounty extends PrismaBounty {
   user: User | null;
 }

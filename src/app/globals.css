@@ -8,12 +8,16 @@
 :root {
     --background: theme("colors.sapphire_blue.50");
     --foreground: theme("colors.sapphire_blue.900");
+    --toast-bg: #ffffff;
+    --toast-text: #1e293b;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         --background: theme("colors.sapphire_blue.900");
         --foreground: theme("colors.sapphire_blue.50");
+        --toast-bg: #1e293b;
+        --toast-text: #f1f5f9;
     }
 }
 

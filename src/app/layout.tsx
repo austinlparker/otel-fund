@@ -40,8 +40,8 @@ export default function RootLayout({
               toastOptions={{
                 className: "",
                 style: {
-                  background: "var(--toast-bg)",
-                  color: "var(--toast-text)",
+                  background: "var(--toast-bg, #FFFFFF)",
+                  color: "var(--toast-text, #1E293B)",
                   boxShadow:
                     "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                 },
@@ -71,13 +71,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                var darkMode = localStorage.getItem('darkMode');
-                if (darkMode === 'true') {
+                var darkMode = localStorage.getItem('darkMode') === 'true';
+                if (darkMode) {
                   document.documentElement.classList.add('dark');
                 }
-                // Set toast colors based on dark mode
-                document.documentElement.style.setProperty('--toast-bg', darkMode === 'true' ? '#1E293B' : '#FFFFFF');
-                document.documentElement.style.setProperty('--toast-text', darkMode === 'true' ? '#F1F5F9' : '#1E293B');
               })();
             `,
           }}

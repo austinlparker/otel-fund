@@ -48,26 +48,21 @@ export default function UserAvatar({
   );
 
   const content = (
-    <>
+    <div
+      className={`flex items-center ${linkToProfile ? "hover:opacity-80 transition-opacity" : ""}`}
+    >
       {avatarContent}
       {showName && user?.name && (
         <span className="ml-2 text-sapphire_blue-800 dark:text-sapphire_blue-100 font-medium">
           {user.name}
         </span>
       )}
-    </>
+    </div>
   );
 
   if (linkToProfile && user?.id) {
-    return (
-      <Link
-        href={`/profile/${user.id}`}
-        className="flex items-center hover:opacity-80 transition-opacity"
-      >
-        {content}
-      </Link>
-    );
+    return <Link href={`/profile/${user.id}`}>{content}</Link>;
   }
 
-  return <div className="flex items-center">{content}</div>;
+  return content;
 }
